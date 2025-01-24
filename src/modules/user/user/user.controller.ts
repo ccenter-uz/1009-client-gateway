@@ -24,6 +24,7 @@ import {
 import { UserLogInDto } from 'types/user/user/dto/log-in-user.dto';
 import { UserService } from './user.service';
 import { LanguageRequestDto, ListQueryDto } from 'types/global';
+import { UserForgetPwdDto } from 'types/user/user/dto/forget-pwd.dto';
 
 @ApiBearerAuth()
 @ApiTags('user')
@@ -52,28 +53,32 @@ export class UserController {
   //   });
   // }
 
-  // @Get('get-me')
-  // @HttpCode(HttpStatus.OK)
-  // async getMeById(@Req() request: Request): Promise<UserInterfaces.Response> {
-  //   return this.userService.getMeById({
-  //     id: +request.body['userData'].user.id,
-  //     logData: request.body['userData'],
-  //   });
-  // }
+  @Get('get-me')
+  @HttpCode(HttpStatus.OK)
+  async getMeById(@Req() request: Request): Promise<UserInterfaces.Response> {
+    console.log(request.body['userData'].user.id, 'request.body');
 
-  // @Put('update-me')
-  // @ApiBody({ type: UserUpdateMeDto })
-  // @HttpCode(HttpStatus.OK)
-  // async updateMe(
-  //   @Req() request: Request,
-  //   @Body() data: Omit<UserUpdateMeDto, 'id'>
-  // ): Promise<UserInterfaces.Response> {
-  //   return this.userService.updateMe({
-  //     ...data,
-  //     id: +request.body['userData'].user.id,
-  //     logData: request.body['userData'],
-  //   });
-  // }
+    return this.userService.getMeById({
+      id: +request.body['userData'].user.id,
+      logData: request.body['userData'],
+    });
+  }
+
+  @Put('update-me')
+  @ApiBody({ type: UserUpdateMeDto })
+  @HttpCode(HttpStatus.OK)
+  async updateMe(
+    @Req() request: Request,
+    @Body() data: Omit<UserUpdateMeDto, 'id'>
+  ): Promise<UserInterfaces.Response> {
+    console.log(request.body['userData'], 'request.body');
+
+    return this.userService.updateMe({
+      ...data,
+      id: +request.body['userData'].user.id,
+      logData: request.body['userData'],
+    });
+  }
 
   // @Get(':id')
   // @ApiParam({ name: 'id' })
@@ -103,20 +108,18 @@ export class UserController {
   //   });
   // }
 
-  // @Put(':id')
-  // @ApiBody({ type: UserUpdateDto })
-  // @HttpCode(HttpStatus.OK)
-  // async update(
-  //   @Req() request: Request,
-  //   @Param('id', ParseIntPipe) id: number,
-  //   @Body() data: Omit<UserUpdateDto, 'id'>
-  // ): Promise<UserInterfaces.Response> {
-  //   return this.userService.update({
-  //     ...data,
-  //     id,
-  //     logData: request.body['userData'],
-  //   });
-  // }
+  @Put('forgot-pwd')
+  @ApiBody({ type: UserUpdateDto })
+  @HttpCode(HttpStatus.OK)
+  async update(
+    @Req() request: Request,
+    @Body() data: Omit<UserForgetPwdDto, 'id'>
+  ): Promise<UserInterfaces.Response> {
+    return this.userService.forgotPwd({
+      ...data,
+    id: +request.body['userData'].user.id,
+    });
+  }
 
   // @Delete(':id')
   // @HttpCode(HttpStatus.OK)
