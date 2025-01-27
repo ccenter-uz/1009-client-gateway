@@ -111,13 +111,13 @@ export class UserController {
   @Put('forgot-pwd')
   @ApiBody({ type: UserUpdateDto })
   @HttpCode(HttpStatus.OK)
-  async update(
+  async forgotPwd(
     @Req() request: Request,
     @Body() data: Omit<UserForgetPwdDto, 'id'>
   ): Promise<UserInterfaces.Response> {
     return this.userService.forgotPwd({
       ...data,
-    id: +request.body['userData'].user.id,
+      id: +request.body['userData'].user.id,
     });
   }
 
