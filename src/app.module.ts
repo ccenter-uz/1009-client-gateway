@@ -36,7 +36,7 @@ import { GoogleCloudStorageModule } from './modules/file-upload/google-cloud-sto
     // RegionModule,
     // CityModule,
     // DistrictModule,
-    // OrganizationModule,
+    OrganizationModule,
     // GoogleCloudStorageModule,
   ],
   providers: [
