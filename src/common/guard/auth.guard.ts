@@ -28,16 +28,12 @@ export class AuthGuard implements CanActivate {
     if (!token) {
       throw new ForbiddenException('No token provided');
     }
-    console.log(token ,`token`);
-    
 
     const decoded = this.jwtService.verify(token); /*as {
       roleId: number;
       userId: number;
       exp?: number;
     };*/
-    console.log(decoded, 'decoded');
-     
 
     const rolePermissions = await this.userService.checkPermission({
       userId: decoded.userId,
@@ -62,6 +58,7 @@ export class AuthGuard implements CanActivate {
       path,
       method,
     };
+    request.userData = userData;
 
     request.body.userData = userData;
 

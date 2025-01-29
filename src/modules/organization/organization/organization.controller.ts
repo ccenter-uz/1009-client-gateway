@@ -100,23 +100,26 @@ export class OrganizationController {
 //     );
 //   }
 
-//   @Post()
-//   @ApiBody({ type: OrganizationCreateDto })
-//   @UseInterceptors(FilesInterceptor('photos'))
-//   @ApiConsumes('multipart/form-data')
-//   @HttpCode(HttpStatus.CREATED)
-//   async create(
-//     @Body() data: OrganizationCreateDto,
-//     @Req() request: Request,
-//     @UploadedFiles() files: Multer.File[]
-//   ): Promise<OrganizationInterfaces.Response> {
-//     return this.organizationService.create(
-//       data,
-//       request.body['userData'].user.role,
-//       request.body['userData'].user.numericId,
-//       files
-//     );
-//   }
+  @Post()
+  @ApiBody({ type: OrganizationCreateDto })
+  @UseInterceptors(FilesInterceptor('photos'))
+  @ApiConsumes('multipart/form-data')
+  @HttpCode(HttpStatus.CREATED)
+  async create(
+    @Body() data: OrganizationCreateDto,
+    @Req() request: Request,
+    @UploadedFiles() files: Multer.File[]
+  ): Promise<OrganizationInterfaces.Response> {
+    console.log(request.body['userData'], 'request.body');
+    console.log(request['userData'], 'request.body 2');
+    
+    return this.organizationService.create(
+      data,
+      request['userData'].user.role,
+      request['userData'].user.numericId,
+      files
+    );
+  }
 
 //   @Put(':id')
 //   @ApiBody({ type: OrganizationVersionUpdateDto })
