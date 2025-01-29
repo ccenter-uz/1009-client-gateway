@@ -121,24 +121,24 @@ export class OrganizationController {
     );
   }
 
-//   @Put(':id')
-//   @ApiBody({ type: OrganizationVersionUpdateDto })
-//   @UseInterceptors(FilesInterceptor('photos'))
-//   @ApiConsumes('multipart/form-data')
-//   @HttpCode(HttpStatus.OK)
-//   async update(
-//     @Param('id', ParseIntPipe) id: number,
-//     @Body() data: Omit<OrganizationVersionUpdateDto, 'id'>,
-//     @Req() request: Request,
-//     @UploadedFiles() files: Multer.File[]
-//   ): Promise<OrganizationVersionInterfaces.Response> {
-//     return this.organizationService.update(
-//       { ...data, id },
-//       request.body['userData'].user.role,
-//       request.body['userData'].user.numericId,
-//       files
-//     );
-//   }
+  @Put(':id')
+  @ApiBody({ type: OrganizationVersionUpdateDto })
+  @UseInterceptors(FilesInterceptor('photos'))
+  @ApiConsumes('multipart/form-data')
+  @HttpCode(HttpStatus.OK)
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() data: Omit<OrganizationVersionUpdateDto, 'id'>,
+    @Req() request: Request,
+    @UploadedFiles() files: Multer.File[]
+  ): Promise<OrganizationVersionInterfaces.Response> {
+    return this.organizationService.update(
+      { ...data, id },
+      request['userData'].user.role,
+      request['userData'].user.numericId,
+      files
+    );
+  }
 //   @Put('check/:id')
 //   @ApiBody({ type: ConfirmDto })
 //   @HttpCode(HttpStatus.OK)
