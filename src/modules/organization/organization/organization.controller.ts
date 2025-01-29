@@ -61,18 +61,18 @@ export class OrganizationController {
     );
   }
 
-//   @Get('my-org')
-//   @HttpCode(HttpStatus.OK)
-//   async getMyOrganization(
-//     @Query() query: MyOrganizationFilterDto,
-//     @Req() request: Request
-//   ): Promise<OrganizationInterfaces.Response[]> {
-//     return await this.organizationService.getMyOrganization(
-//       query,
-//       request.body['userData'].user.numericId,
-//       request.body['userData'].user.role
-//     );
-//   }
+  @Get('my-org')
+  @HttpCode(HttpStatus.OK)
+  async getMyOrganization(
+    @Query() query: MyOrganizationFilterDto,
+    @Req() request: Request
+  ): Promise<OrganizationInterfaces.Response[]> {
+    return await this.organizationService.getMyOrganization(
+      query,
+      request.body['userData'].user.numericId,
+      request.body['userData'].user.role
+    );
+  }
 
 //   @Get('unconfirm')
 //   @HttpCode(HttpStatus.OK)
