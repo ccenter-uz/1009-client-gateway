@@ -74,31 +74,31 @@ export class OrganizationController {
     );
   }
 
-  @Get('unconfirm')
-  @HttpCode(HttpStatus.OK)
-  async getUnconfirm(
-    @Query() query: UnconfirmOrganizationFilterDto,
-    @Req() request: Request
-  ): Promise<OrganizationInterfaces.Response[]> {
-    return await this.organizationService.getUnconfirm(
-      query,
-      request.body['userData'].user.numericId
-    );
-  }
+//   @Get('unconfirm')
+//   @HttpCode(HttpStatus.OK)
+//   async getUnconfirm(
+//     @Query() query: UnconfirmOrganizationFilterDto,
+//     @Req() request: Request
+//   ): Promise<OrganizationInterfaces.Response[]> {
+//     return await this.organizationService.getUnconfirm(
+//       query,
+//       request.body['userData'].user.numericId
+//     );
+//   }
 
-  @Get(':id')
-  @ApiParam({ name: 'id' })
-  @HttpCode(HttpStatus.OK)
-  async getById(
-    @Param('id', ParseIntPipe) id: number,
-    @Query() query: LanguageRequestDto,
-    @Req() request: Request
-  ): Promise<OrganizationInterfaces.Response> {
-    return this.organizationService.getById(
-      { id, ...query },
-      request.body['userData'].user.role
-    );
-  }
+//   @Get(':id')
+//   @ApiParam({ name: 'id' })
+//   @HttpCode(HttpStatus.OK)
+//   async getById(
+//     @Param('id', ParseIntPipe) id: number,
+//     @Query() query: LanguageRequestDto,
+//     @Req() request: Request
+//   ): Promise<OrganizationInterfaces.Response> {
+//     return this.organizationService.getById(
+//       { id, ...query },
+//       request.body['userData'].user.role
+//     );
+//   }
 
   @Post()
   @ApiBody({ type: OrganizationCreateDto })
@@ -110,10 +110,13 @@ export class OrganizationController {
     @Req() request: Request,
     @UploadedFiles() files: Multer.File[]
   ): Promise<OrganizationInterfaces.Response> {
+    console.log(request.body['userData'], 'request.body');
+    console.log(request['userData'], 'request.body 2');
+    
     return this.organizationService.create(
       data,
-      request.body['userData'].user.role,
-      request.body['userData'].user.numericId,
+      request['userData'].user.role,
+      request['userData'].user.numericId,
       files
     );
   }
@@ -131,51 +134,51 @@ export class OrganizationController {
   ): Promise<OrganizationVersionInterfaces.Response> {
     return this.organizationService.update(
       { ...data, id },
-      request.body['userData'].user.role,
-      request.body['userData'].user.numericId,
+      request['userData'].user.role,
+      request['userData'].user.numericId,
       files
     );
   }
-  @Put('check/:id')
-  @ApiBody({ type: ConfirmDto })
-  @HttpCode(HttpStatus.OK)
-  async updateCheck(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() data: Omit<ConfirmDto, 'id'>,
-    @Req() request: Request
-  ): Promise<OrganizationVersionInterfaces.Response> {
-    return this.organizationService.updateCheck(
-      { ...data, id },
-      request.body['userData'].user.role,
-      request.body['userData'].user.numericId
-    );
-  }
+//   @Put('check/:id')
+//   @ApiBody({ type: ConfirmDto })
+//   @HttpCode(HttpStatus.OK)
+//   async updateCheck(
+//     @Param('id', ParseIntPipe) id: number,
+//     @Body() data: Omit<ConfirmDto, 'id'>,
+//     @Req() request: Request
+//   ): Promise<OrganizationVersionInterfaces.Response> {
+//     return this.organizationService.updateCheck(
+//       { ...data, id },
+//       request.body['userData'].user.role,
+//       request.body['userData'].user.numericId
+//     );
+//   }
 
-  @Delete(':id')
-  @HttpCode(HttpStatus.OK)
-  async delete(
-    @Param('id', ParseIntPipe) id: number,
-    @Req() request: Request,
-    @Query('delete') deleteQuery?: boolean,
-    @Query('deleteReason') deleteReason?: string
-  ): Promise<OrganizationInterfaces.Response> {
-    return this.organizationService.delete({
-      id,
-      delete: deleteQuery,
-      role: request.body['userData'].user.role,
-      deleteReason: deleteReason,
-    });
-  }
+//   @Delete(':id')
+//   @HttpCode(HttpStatus.OK)
+//   async delete(
+//     @Param('id', ParseIntPipe) id: number,
+//     @Req() request: Request,
+//     @Query('delete') deleteQuery?: boolean,
+//     @Query('deleteReason') deleteReason?: string
+//   ): Promise<OrganizationInterfaces.Response> {
+//     return this.organizationService.delete({
+//       id,
+//       delete: deleteQuery,
+//       role: request.body['userData'].user.role,
+//       deleteReason: deleteReason,
+//     });
+//   }
 
-  @Put(':id/restore')
-  @HttpCode(HttpStatus.OK)
-  async restore(
-    @Param('id', ParseIntPipe) id: number,
-    @Req() request: Request
-  ): Promise<OrganizationInterfaces.Response> {
-    return this.organizationService.restore({
-      id,
-      role: request.body['userData'].user.role,
-    });
-  }
+//   @Put(':id/restore')
+//   @HttpCode(HttpStatus.OK)
+//   async restore(
+//     @Param('id', ParseIntPipe) id: number,
+//     @Req() request: Request
+//   ): Promise<OrganizationInterfaces.Response> {
+//     return this.organizationService.restore({
+//       id,
+//       role: request.body['userData'].user.role,
+//     });
+//   }
 }

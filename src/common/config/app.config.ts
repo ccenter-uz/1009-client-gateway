@@ -49,7 +49,7 @@ export const appConfig = registerAs(
   CONFIG_APP_TOKEN,
   (): AppConfig => ({
     host: process.env.APP_HOST || '0.0.0.0',
-    port: parseInt(process.env.APP_PORT) || 3001,
+    port: parseInt(process.env.APP_PORT) || 3003,
     cors_domains: process.env.CORS_DOMAINS || '*',
   })
 );
