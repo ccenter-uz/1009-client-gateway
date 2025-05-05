@@ -55,7 +55,7 @@ import { AdditionalCategoryModule } from './modules/additional-category/addition
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
-    },
+    }, 
   ],
 })
 export class AppModule {}
