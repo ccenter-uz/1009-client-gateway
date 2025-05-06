@@ -56,8 +56,8 @@ export class OrganizationController {
   ): Promise<OrganizationInterfaces.Response[]> {
     return await this.organizationService.getListOrganization(
       query,
-      request.body['userData'].user.numericId,
-      request.body['userData'].user.role
+      request?.body['userData']?.user?.numericId,
+      request?.body['userData']?.user?.role
     );
   }
 
