@@ -19,6 +19,8 @@ import { RegionModule } from './modules/organization/region/region.module';
 import { CityModule } from './modules/organization/city/city.module';
 import { OrganizationModule } from './modules/organization/organization/organization.module';
 import { GoogleCloudStorageModule } from './modules/file-upload/google-cloud-storage.module';
+import { AdditionalModule } from './modules/additional/additional.module';
+import { AdditionalCategoryModule } from './modules/additional-category/additional-category.module';
 
 @Module({
   imports: [
@@ -36,7 +38,9 @@ import { GoogleCloudStorageModule } from './modules/file-upload/google-cloud-sto
     // RegionModule,
     // CityModule,
     // DistrictModule,
-    // OrganizationModule,
+    OrganizationModule,
+    AdditionalModule,
+    AdditionalCategoryModule,
     // GoogleCloudStorageModule,
   ],
   providers: [

@@ -25,6 +25,7 @@ import { UserInterfaces } from 'types/user/user';
 import { CheckUserPermissionDto } from 'types/user/user/dto/check-permission.dto';
 import { UserLogInDto } from 'types/user/user/dto/log-in-user.dto';
 import { JwtConfig } from 'src/common/config/app.config';
+import { UserForgetPwdDto } from 'types/user/user/dto/forget-pwd.dto';
 
 @Injectable()
 export class UserService {
@@ -161,19 +162,19 @@ export class UserService {
     return response;
   }
 
-  async update(data: UserUpdateDto): Promise<UserInterfaces.Response> {
+  async forgotPwd(data: UserForgetPwdDto): Promise<any> {
     try {
-      const methodName: string = this.update.name;
+      const methodName: string = this.forgotPwd.name;
 
       this.logger.debug(`Method: ${methodName} - Request: `, data);
 
-      const response: UserInterfaces.Response = await lastValueFrom(
-        this.adminClient.send<UserInterfaces.Response, UserInterfaces.Update>(
-          { cmd: Commands.UPDATE },
-          data
-        )
-      );
-
+      // const response: UserInterfaces.Response = await lastValueFrom(
+      //   this.adminClient.send<UserInterfaces.Response, UserInterfaces.Update>(
+      //     { cmd: Commands.FORGOT_PWD },
+      //     data
+      //   )
+      // );
+      const response = true;
       this.logger.debug(`Method: ${methodName} - Response: `, response);
 
       return response;
