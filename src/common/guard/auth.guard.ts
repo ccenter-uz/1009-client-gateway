@@ -22,7 +22,12 @@ export class AuthGuard implements CanActivate {
     const token = request.headers['authorization']?.split(' ')[1];
 
     if (path === '/user/log-in') return true;
+    if (path === '/organization') {
 
+      
+      return true;
+    }
+      ;
     console.log(request.route.path, 'PATH');
 
     if (!token) {
