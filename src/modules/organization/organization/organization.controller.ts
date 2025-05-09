@@ -86,19 +86,19 @@ export class OrganizationController {
 //     );
 //   }
 
-//   @Get(':id')
-//   @ApiParam({ name: 'id' })
-//   @HttpCode(HttpStatus.OK)
-//   async getById(
-//     @Param('id', ParseIntPipe) id: number,
-//     @Query() query: LanguageRequestDto,
-//     @Req() request: Request
-//   ): Promise<OrganizationInterfaces.Response> {
-//     return this.organizationService.getById(
-//       { id, ...query },
-//       request.body['userData'].user.role
-//     );
-//   }
+  @Get(':id')
+  @ApiParam({ name: 'id' })
+  @HttpCode(HttpStatus.OK)
+  async getById(
+    @Param('id', ParseIntPipe) id: number,
+    @Query() query: LanguageRequestDto,
+    @Req() request: Request
+  ): Promise<OrganizationInterfaces.Response> {
+    return this.organizationService.getById(
+      { id, ...query },
+      request?.body['userData']?.user?.role
+    );
+  }
 
   @Post()
   @ApiBody({ type: OrganizationCreateDto })

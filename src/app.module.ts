@@ -35,8 +35,8 @@ import { AdditionalCategoryModule } from './modules/additional-category/addition
     }),
     UserModule,
 
-    // RegionModule,
-    // CityModule,
+    RegionModule,
+    CityModule,
     // DistrictModule,
     OrganizationModule,
     AdditionalModule,
