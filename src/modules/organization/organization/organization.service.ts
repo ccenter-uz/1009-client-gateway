@@ -43,7 +43,7 @@ export class OrganizationService {
       OrganizationFilterDto
     );
 
-    const response = lastValueFrom(
+    const response = await lastValueFrom(
       this.adminClient.send<
         OrganizationInterfaces.Response[],
         OrganizationFilterDto
@@ -87,7 +87,7 @@ export class OrganizationService {
       UnconfirmOrganizationFilterDto
     );
 
-    const response = lastValueFrom(
+    const response = await lastValueFrom(
       this.adminClient.send<
         OrganizationInterfaces.Response[],
         UnconfirmOrganizationFilterDto
@@ -105,7 +105,7 @@ export class OrganizationService {
 
     this.logger.debug(`Method: ${methodName} - Request: `, data);
     data.role = role;
-    const response = lastValueFrom(
+    const response = await lastValueFrom(
       this.adminClient.send<OrganizationInterfaces.Response, GetOneDto>(
         { cmd: Commands.GET_BY_ID },
         data
