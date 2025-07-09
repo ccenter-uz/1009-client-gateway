@@ -26,6 +26,8 @@ export class AuthGuard implements CanActivate {
     if (path === '/city') return true;
     if (path === '/region') return true;
     if (path === '/organization/:id') return true;
+    if (path === '/user') return true;
+
 
 
     console.log(request.route.path, 'PATH');
@@ -64,6 +66,7 @@ export class AuthGuard implements CanActivate {
       method,
     };
     request.userData = userData;
+console.log(userData, 'userData');
 
     request.body.userData = userData;
 
