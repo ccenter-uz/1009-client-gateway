@@ -95,18 +95,18 @@ export class UserController {
   //   });
   // }
 
-  // @Post()
-  // @ApiBody({ type: UserCreateDto })
-  // @HttpCode(HttpStatus.CREATED)
-  // async create(
-  //   @Req() request: Request,
-  //   @Body() data: UserCreateDto
-  // ): Promise<UserInterfaces.Response> {
-  //   return this.userService.create({
-  //     ...data,
-  //     logData: request.body['userData'],
-  //   });
-  // }
+  @Post()
+  @ApiBody({ type: UserCreateDto })
+  @HttpCode(HttpStatus.CREATED)
+  async create(
+    @Req() request: Request,
+    @Body() data: UserCreateDto
+  ): Promise<UserInterfaces.Response> {
+    return this.userService.create({
+      ...data,
+      logData: request.body['userData'],
+    });
+  }
 
   @Put('forgot-pwd')
   @ApiBody({ type: UserUpdateDto })

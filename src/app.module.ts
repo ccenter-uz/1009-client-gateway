@@ -21,6 +21,7 @@ import { OrganizationModule } from './modules/organization/organization/organiza
 import { GoogleCloudStorageModule } from './modules/file-upload/google-cloud-storage.module';
 import { AdditionalModule } from './modules/additional/additional.module';
 import { AdditionalCategoryModule } from './modules/additional-category/additional-category.module';
+import { SavedOrganizationModule } from './modules/organization/saved-organization/saved-organization.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { AdditionalCategoryModule } from './modules/additional-category/addition
     CityModule,
     // DistrictModule,
     OrganizationModule,
+    SavedOrganizationModule,
     AdditionalModule,
     AdditionalCategoryModule,
     // GoogleCloudStorageModule,
