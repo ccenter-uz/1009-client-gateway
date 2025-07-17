@@ -57,7 +57,8 @@ export class OrganizationController {
     return await this.organizationService.getListOrganization(
       query,
       request?.body['userData']?.user?.numericId,
-      request?.body['userData']?.user?.role
+      request?.body['userData']?.user?.role,
+      request?.body['userData']?.user?.id
     );
   }
 

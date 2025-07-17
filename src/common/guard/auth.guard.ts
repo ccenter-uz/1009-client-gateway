@@ -20,15 +20,14 @@ export class AuthGuard implements CanActivate {
     const method = request.method;
     const path = request.route.path.split('v1')[1];
     const token = request.headers['authorization']?.split(' ')[1];
+    console.log(token, 'token');
 
     if (path === '/user/log-in') return true;
-    if (path === '/organization') return true;
+    if (path === '/organization' && !token) return true;
     if (path === '/city') return true;
     if (path === '/region') return true;
     if (path === '/organization/:id') return true;
     if (path === '/user') return true;
-
-
 
     console.log(request.route.path, 'PATH');
 
@@ -66,7 +65,7 @@ export class AuthGuard implements CanActivate {
       method,
     };
     request.userData = userData;
-console.log(userData, 'userData');
+    console.log(userData, 'userData');
 
     request.body.userData = userData;
 

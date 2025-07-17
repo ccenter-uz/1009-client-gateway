@@ -7,6 +7,7 @@ import {
   SavedOrganizationCreateDto,
   savedOrganizationUpdateDto,
   savedOrganizationInterfaces,
+  GetOneSavedOrganizationDto,
   SavedOrganizationCommands as Commands,
 } from 'types/organization/saved-organization';
 import { CityFilterDto } from 'types/organization/city/dto/filter-city.dto';
@@ -27,7 +28,7 @@ export class SavedOrganizationService {
   }
 
   async getById(
-    data: GetOneDto
+    data: GetOneSavedOrganizationDto
   ): Promise<savedOrganizationInterfaces.Response> {
     return lastValueFrom(
       this.adminClient.send<savedOrganizationInterfaces.Response, GetOneDto>(
@@ -37,9 +38,9 @@ export class SavedOrganizationService {
     );
   }
 
-  async create(
-    data: SavedOrganizationCreateDto,
 
+  async create(
+    data: SavedOrganizationCreateDto
   ): Promise<savedOrganizationInterfaces.Response> {
     return await lastValueFrom(
       this.adminClient.send<

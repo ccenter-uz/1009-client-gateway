@@ -33,11 +33,17 @@ export class OrganizationService {
   async getListOrganization(
     query: OrganizationFilterDto,
     userNumericId: string,
-    role: string
+    role: string,
+    userId: number
   ): Promise<OrganizationInterfaces.Response[]> {
     const methodName: string = this.getListOrganization.name;
+
     query.staffNumber = userNumericId;
     query.role = role;
+    // query.logData = userData?.user;
+    query.userId = userId;
+
+
     this.logger.debug(
       `Method: ${methodName} - Request: `,
       OrganizationFilterDto

@@ -42,9 +42,14 @@ export class SavedOrganizationController {
   @HttpCode(HttpStatus.OK)
   async getById(
     @Param('id', ParseIntPipe) id: number,
-    @Query() query: LanguageRequestDto
+    @Query() query: LanguageRequestDto,
+    @Req() request: Request
   ): Promise<savedOrganizationInterfaces.Response> {
-    return this.subCategoryService.getById({ id, ...query });
+    return this.subCategoryService.getById({
+      id,
+      ...query,
+      userId: request['userData']?.user?.id,
+    });
   }
 
   @Post()
@@ -65,25 +70,30 @@ export class SavedOrganizationController {
   @HttpCode(HttpStatus.OK)
   async update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() data: Omit<savedOrganizationUpdateDto, 'id'>
+    @Body() data: Omit<savedOrganizationUpdateDto, 'id'>,
+    @Req() request: Request
   ): Promise<savedOrganizationInterfaces.Response> {
-    return this.subCategoryService.update({ ...data, id });
+    return this.subCategoryService.update({
+      ...data,
+      id,
+      userId: request['userData']?.user?.id,
+    });
   }
 
-  @Delete(':id')
-  @HttpCode(HttpStatus.OK)
-  async delete(
-    @Param('id', ParseIntPipe) id: number,
-    @Query('delete') deleteQuery?: boolean
-  ): Promise<savedOrganizationInterfaces.Response> {
-    return this.subCategoryService.delete({ id, delete: deleteQuery });
-  }
+  // @Delete(':id')
+  // @HttpCode(HttpStatus.OK)
+  // async delete(
+  //   @Param('id', ParseIntPipe) id: number,
+  //   @Query('delete') deleteQuery?: boolean
+  // ): Promise<savedOrganizationInterfaces.Response> {
+  //   return this.subCategoryService.delete({ id, delete: deleteQuery });
+  // }
 
-  @Put(':id/restore')
-  @HttpCode(HttpStatus.OK)
-  async restore(
-    @Param('id', ParseIntPipe) id: number
-  ): Promise<savedOrganizationInterfaces.Response> {
-    return this.subCategoryService.restore({ id });
-  }
+  // @Put(':id/restore')
+  // @HttpCode(HttpStatus.OK)
+  // async restore(
+  //   @Param('id', ParseIntPipe) id: number
+  // ): Promise<savedOrganizationInterfaces.Response> {
+  //   return this.subCategoryService.restore({ id });
+  // }
 }
