@@ -9,6 +9,7 @@ import {
   savedOrganizationInterfaces,
   GetOneSavedOrganizationDto,
   SavedOrganizationCommands as Commands,
+  SavedOrganizationFilterDto,
 } from 'types/organization/saved-organization';
 import { CityFilterDto } from 'types/organization/city/dto/filter-city.dto';
 
@@ -17,12 +18,13 @@ export class SavedOrganizationService {
   constructor(@Inject(ORGANIZATION) private adminClient: ClientProxy) {}
 
   async getAll(
-    query: CityFilterDto
+    query: SavedOrganizationFilterDto
   ): Promise<savedOrganizationInterfaces.Response[]> {
+    
     return lastValueFrom(
       this.adminClient.send<
         savedOrganizationInterfaces.Response[],
-        CityFilterDto
+        SavedOrganizationFilterDto
       >({ cmd: Commands.GET_ALL_LIST }, query)
     );
   }

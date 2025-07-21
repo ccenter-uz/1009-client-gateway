@@ -20,8 +20,8 @@ import {
   SavedOrganizationCreateDto,
   savedOrganizationUpdateDto,
   savedOrganizationInterfaces,
+  SavedOrganizationFilterDto,
 } from 'types/organization/saved-organization';
-import { CityFilterDto } from 'types/organization/city/dto/filter-city.dto';
 
 @ApiBearerAuth()
 @ApiTags('saved-organization')
@@ -32,9 +32,13 @@ export class SavedOrganizationController {
   @Get()
   @HttpCode(HttpStatus.OK)
   async getAll(
-    @Query() query: CityFilterDto
+    @Req() request: Request,
+    @Query() query: SavedOrganizationFilterDto
   ): Promise<savedOrganizationInterfaces.Response[]> {
-    return await this.subCategoryService.getAll(query);
+    return await this.subCategoryService.getAll({
+      ...query,
+      userId: request['userData']?.user?.id,
+    });
   }
 
   @Get(':id')
@@ -65,13 +69,13 @@ export class SavedOrganizationController {
     });
   }
 
-  @Put(':id')
+  @Put(':organizationId')
   @ApiBody({ type: savedOrganizationUpdateDto })
   @HttpCode(HttpStatus.OK)
   async update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() data: Omit<savedOrganizationUpdateDto, 'id'>,
-    @Req() request: Request
+    @Req() request: Request,
+    @Param('organizationId', ParseIntPipe) id: number,
+    @Body() data: Omit<savedOrganizationUpdateDto, 'id'>
   ): Promise<savedOrganizationInterfaces.Response> {
     return this.subCategoryService.update({
       ...data,
@@ -80,20 +84,20 @@ export class SavedOrganizationController {
     });
   }
 
-  // @Delete(':id')
-  // @HttpCode(HttpStatus.OK)
-  // async delete(
-  //   @Param('id', ParseIntPipe) id: number,
-  //   @Query('delete') deleteQuery?: boolean
-  // ): Promise<savedOrganizationInterfaces.Response> {
-  //   return this.subCategoryService.delete({ id, delete: deleteQuery });
-  // }
+  @Delete(':id')
+  @HttpCode(HttpStatus.OK)
+  async delete(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('delete') deleteQuery?: boolean
+  ): Promise<savedOrganizationInterfaces.Response> {
+    return this.subCategoryService.delete({ id, delete: deleteQuery });
+  }
 
-  // @Put(':id/restore')
-  // @HttpCode(HttpStatus.OK)
-  // async restore(
-  //   @Param('id', ParseIntPipe) id: number
-  // ): Promise<savedOrganizationInterfaces.Response> {
-  //   return this.subCategoryService.restore({ id });
-  // }
+  @Put(':id/restore')
+  @HttpCode(HttpStatus.OK)
+  async restore(
+    @Param('id', ParseIntPipe) id: number
+  ): Promise<savedOrganizationInterfaces.Response> {
+    return this.subCategoryService.restore({ id });
+  }
 }
