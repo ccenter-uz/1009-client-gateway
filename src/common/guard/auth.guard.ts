@@ -65,7 +65,6 @@ export class AuthGuard implements CanActivate {
       method,
     };
     request.userData = userData;
-    console.log(userData, 'userData');
 
     request.body.userData = userData;
 
