@@ -110,6 +110,8 @@ export class OrganizationController {
     @Req() request: Request,
     @UploadedFiles() files: Multer.File[]
   ): Promise<OrganizationInterfaces.Response> {
+    console.log(request.body['userData'], 'request.body');
+    console.log(request['userData'], 'request.body 2');
     
     return this.organizationService.create(
       data,
