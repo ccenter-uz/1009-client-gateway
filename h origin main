@@ -1,0 +1,187 @@
+[33mcommit 7c76df6fb3a456429e2305bb7b924cb028cc3d81[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Mirxonjon <mirxonjonismanov152@gmail.com>
+Date:   Tue Jul 22 02:59:37 2025 +0500
+
+    fixed bug saved org
+
+[33mcommit ec28ab30037a66c63e8f2e673c82d8848c5ce011[m[33m ([m[1;31morigin/dev[m[33m)[m
+Merge: dd4ee35 524faff
+Author: Imron <77952210+imronshoimov@users.noreply.github.com>
+Date:   Fri Jul 11 15:00:07 2025 +0500
+
+    Merge pull request #6 from ccenter-uz/QX1009-341
+    
+    Qx1009 341
+
+[33mcommit 524faffbb5d5d791c477a53414ff13e35db4542d[m[33m ([m[1;31morigin/QX1009-341[m[33m)[m
+Author: Mirxonjon <mirxonjonismanov152@gmail.com>
+Date:   Thu Jul 10 20:55:10 2025 +0500
+
+    add saved org
+
+[33mcommit 2f82ab6dafd43b25a77e5c7060b32b2adc4c9c27[m[33m ([m[1;31morigin/QX1009-312[m[33m)[m
+Author: Mirxonjon <mirxonjonismanov152@gmail.com>
+Date:   Wed Jul 9 19:33:01 2025 +0500
+
+    add new api create user
+
+[33mcommit dd4ee3584b7b8b541e8d405d69a7d5f6c0805adb[m
+Merge: 009279a 838f095
+Author: Imron <77952210+imronshoimov@users.noreply.github.com>
+Date:   Fri Jul 4 17:27:28 2025 +0500
+
+    Merge pull request #5 from ccenter-uz/QX1009-312
+    
+    fixed bug
+
+[33mcommit 838f09512be3b1f08a012a56dceeab27ce5eee2d[m
+Author: Mirxonjon <mirxonjonismanov152@gmail.com>
+Date:   Fri Jul 4 17:25:31 2025 +0500
+
+    fixed bug
+
+[33mcommit 009279a6736423102ede7345063cc33d4cd44b6f[m
+Merge: 33b32cd 99ffc5c
+Author: Imron <77952210+imronshoimov@users.noreply.github.com>
+Date:   Fri May 9 22:37:45 2025 +0500
+
+    Merge pull request #4 from ccenter-uz/QX1009-312
+    
+    add new api
+
+[33mcommit 99ffc5c88e673dab02624ec34f94e1b6587426a0[m
+Author: Mirxonjon <mirxonjonismanov152@gmail.com>
+Date:   Thu May 8 17:55:20 2025 +0500
+
+    delete log
+
+[33mcommit afb07edfd6107c2503afcda7d4c1b628a271abfd[m
+Author: Mirxonjon <mirxonjonismanov152@gmail.com>
+Date:   Thu May 8 17:28:29 2025 +0500
+
+    add new api
+
+[33mcommit 33b32cd68757b07c21f9c15cf8804f93b3b84ccc[m
+Merge: 9de0eac 6728a50
+Author: imronshoimov <imronshoimov125@gmail.com>
+Date:   Thu May 8 12:17:20 2025 +0500
+
+    fix
+
+[33mcommit 9de0eac8913135897539a3ace5251e8edaa80b8d[m
+Author: imronshoimov <imronshoimov125@gmail.com>
+Date:   Thu May 8 12:17:03 2025 +0500
+
+    edited swagger
+
+[33mcommit 12b7e15652b8fbe8584948efe201e2036f89ecf0[m
+Merge: ee6364f 6166751
+Author: imronshoimov <imronshoimov125@gmail.com>
+Date:   Thu May 8 12:14:30 2025 +0500
+
+    fix
+
+[33mcommit ee6364ff489df03da38c7de02c96c97d26422151[m
+Author: imronshoimov <imronshoimov125@gmail.com>
+Date:   Thu May 8 12:14:01 2025 +0500
+
+    change
+
+[33mcommit 6728a507d4b7fdb37683e7bae2f214366033847f[m
+Author: Mirxonjon <mirxonjonismanov152@gmail.com>
+Date:   Tue May 6 18:02:57 2025 +0500
+
+    fixed bug
+
+[33mcommit 61667517ad02cbd82d46b2345a91dc1b7ba558d8[m
+Merge: cbd942a afaf945
+Author: Imron <77952210+imronshoimov@users.noreply.github.com>
+Date:   Tue May 6 17:35:41 2025 +0500
+
+    Merge pull request #3 from ccenter-uz/QX1009-202
+    
+    Qx1009 202
+
+[33mcommit cbd942a80e48dee0b58b7d5269934bd0a6262358[m
+Merge: 4d6ed0f e979f5f
+Author: Imron <77952210+imronshoimov@users.noreply.github.com>
+Date:   Tue May 6 17:35:21 2025 +0500
+
+    Merge pull request #2 from ccenter-uz/QX1009-204
+    
+    Qx1009 204
+
+[33mcommit 4d6ed0f5020f30cfe6c9860cff85bdc0adf90cdd[m
+Merge: a7f93a5 ce1baa4
+Author: Imron <77952210+imronshoimov@users.noreply.github.com>
+Date:   Tue May 6 17:34:58 2025 +0500
+
+    Merge pull request #1 from ccenter-uz/user-client
+    
+    fixed bug and add new api
+
+[33mcommit afaf9454793818986c56dd6d1bd692ec2336be77[m[33m ([m[1;31morigin/QX1009-206[m[33m, [m[1;31morigin/QX1009-202[m[33m)[m
+Author: Mirxonjon <mirxonjonismanov152@gmail.com>
+Date:   Thu Jan 30 12:27:56 2025 +0500
+
+    add aditional and category
+
+[33mcommit 26e0ae0ac47210e14ad78f57f0073cc7ff569cb1[m
+Author: Mirxonjon <mirxonjonismanov152@gmail.com>
+Date:   Wed Jan 29 17:28:13 2025 +0500
+
+    add update api
+
+[33mcommit e416b11444b2e04ef5d88e6a01842268928c5f54[m[33m ([m[1;31morigin/QX1009-205[m[33m)[m
+Author: Mirxonjon <mirxonjonismanov152@gmail.com>
+Date:   Wed Jan 29 16:04:43 2025 +0500
+
+    fixed bug
+
+[33mcommit cd5b90c974c845fa7525bc05903e53d861e2e074[m[33m ([m[1;31morigin/QX1009-203[m[33m)[m
+Author: Mirxonjon <mirxonjonismanov152@gmail.com>
+Date:   Wed Jan 29 15:19:00 2025 +0500
+
+    create client
+
+[33mcommit e979f5f95240801bd0a701452e8f0bc0d621eead[m[33m ([m[1;31morigin/QX1009-204[m[33m)[m
+Author: Mirxonjon <mirxonjonismanov152@gmail.com>
+Date:   Tue Jan 28 19:19:53 2025 +0500
+
+    add org get api
+
+[33mcommit ce1baa48b16664f10a3de2727a14a4644e0cd22d[m[33m ([m[1;31morigin/user-client[m[33m)[m
+Author: Mirxonjon <mirxonjonismanov152@gmail.com>
+Date:   Mon Jan 27 11:55:18 2025 +0500
+
+    fixed bug
+
+[33mcommit 0d8270d6baf4ed9b4c539e608a4b4fe621b18cb3[m
+Author: Mirxonjon <mirxonjonismanov152@gmail.com>
+Date:   Fri Jan 24 19:05:45 2025 +0500
+
+    fixed bug and add new api
+
+[33mcommit a7f93a54b12b4446d8df7c1af99ce3a76a3fbdc5[m
+Author: imron <imronshoimov125@gmail.com>
+Date:   Wed Jan 22 17:27:46 2025 +0500
+
+    type change
+
+[33mcommit d05c992f7a91e2eff44ab895fc188bdf6b8b07af[m
+Author: imron <imronshoimov125@gmail.com>
+Date:   Wed Jan 22 17:26:40 2025 +0500
+
+    type change
+
+[33mcommit 48f4acc34912b99d374f1b208c7ecf2e191a7918[m
+Author: imron <imronshoimov125@gmail.com>
+Date:   Wed Jan 22 17:25:53 2025 +0500
+
+    created architectire
+
+[33mcommit 4d7c7bf787a74d728107a025af701fde752b3c5f[m
+Author: Imron <77952210+imronshoimov@users.noreply.github.com>
+Date:   Tue Jan 21 17:11:44 2025 +0500
+
+    Initial commit
