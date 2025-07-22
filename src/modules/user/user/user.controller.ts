@@ -56,7 +56,6 @@ export class UserController {
   @Get('get-me')
   @HttpCode(HttpStatus.OK)
   async getMeById(@Req() request: Request): Promise<UserInterfaces.Response> {
-    console.log(request.body['userData'].user.id, 'request.body');
 
     return this.userService.getMeById({
       id: +request.body['userData'].user.id,
@@ -71,7 +70,6 @@ export class UserController {
     @Req() request: Request,
     @Body() data: Omit<UserUpdateMeDto, 'id'>
   ): Promise<UserInterfaces.Response> {
-    console.log(request.body['userData'], 'request.body');
 
     return this.userService.updateMe({
       ...data,

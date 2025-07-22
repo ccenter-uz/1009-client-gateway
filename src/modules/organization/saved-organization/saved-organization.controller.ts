@@ -20,8 +20,8 @@ import {
   SavedOrganizationCreateDto,
   savedOrganizationUpdateDto,
   savedOrganizationInterfaces,
+  SavedOrganizationFilterDto,
 } from 'types/organization/saved-organization';
-import { CityFilterDto } from 'types/organization/city/dto/filter-city.dto';
 
 @ApiBearerAuth()
 @ApiTags('saved-organization')
@@ -32,9 +32,13 @@ export class SavedOrganizationController {
   @Get()
   @HttpCode(HttpStatus.OK)
   async getAll(
-    @Query() query: CityFilterDto
+    @Req() request: Request,
+    @Query() query: SavedOrganizationFilterDto
   ): Promise<savedOrganizationInterfaces.Response[]> {
-    return await this.subCategoryService.getAll(query);
+    return await this.subCategoryService.getAll({
+      ...query,
+      userId: request['userData']?.user?.id,
+    });
   }
 
   @Get(':id')
@@ -42,9 +46,14 @@ export class SavedOrganizationController {
   @HttpCode(HttpStatus.OK)
   async getById(
     @Param('id', ParseIntPipe) id: number,
-    @Query() query: LanguageRequestDto
+    @Query() query: LanguageRequestDto,
+    @Req() request: Request
   ): Promise<savedOrganizationInterfaces.Response> {
-    return this.subCategoryService.getById({ id, ...query });
+    return this.subCategoryService.getById({
+      id,
+      ...query,
+      userId: request['userData']?.user?.id,
+    });
   }
 
   @Post()
@@ -60,14 +69,19 @@ export class SavedOrganizationController {
     });
   }
 
-  @Put(':id')
+  @Put(':organizationId')
   @ApiBody({ type: savedOrganizationUpdateDto })
   @HttpCode(HttpStatus.OK)
   async update(
-    @Param('id', ParseIntPipe) id: number,
+    @Req() request: Request,
+    @Param('organizationId', ParseIntPipe) id: number,
     @Body() data: Omit<savedOrganizationUpdateDto, 'id'>
   ): Promise<savedOrganizationInterfaces.Response> {
-    return this.subCategoryService.update({ ...data, id });
+    return this.subCategoryService.update({
+      ...data,
+      id,
+      userId: request['userData']?.user?.id,
+    });
   }
 
   @Delete(':id')
