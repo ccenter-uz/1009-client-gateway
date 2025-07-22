@@ -27,6 +27,8 @@ export class AuthGuard implements CanActivate {
     if (path === '/region') return true;
     if (path === '/organization/:id') return true;
     if (path === '/user') return true;
+    if (path === '/user/verify-sms-code') return true;
+    if (path === '/user/resend-sms-code') return true;
 
     console.log(request.route.path, 'PATH');
 
