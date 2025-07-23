@@ -16,10 +16,12 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
 import {
+  ResendSmsCodeDto,
   UserCreateDto,
   UserInterfaces,
   UserUpdateDto,
   UserUpdateMeDto,
+  VerifySmsCodeDto,
 } from 'types/user/user';
 import { UserLogInDto } from 'types/user/user/dto/log-in-user.dto';
 import { UserService } from './user.service';
@@ -56,7 +58,6 @@ export class UserController {
   @Get('get-me')
   @HttpCode(HttpStatus.OK)
   async getMeById(@Req() request: Request): Promise<UserInterfaces.Response> {
-
     return this.userService.getMeById({
       id: +request.body['userData'].user.id,
       logData: request.body['userData'],
@@ -70,7 +71,6 @@ export class UserController {
     @Req() request: Request,
     @Body() data: Omit<UserUpdateMeDto, 'id'>
   ): Promise<UserInterfaces.Response> {
-
     return this.userService.updateMe({
       ...data,
       id: +request.body['userData'].user.id,
@@ -104,6 +104,24 @@ export class UserController {
       ...data,
       logData: request.body['userData'],
     });
+  }
+
+  @Post('verify-sms-code')
+  @ApiBody({ type: VerifySmsCodeDto })
+  @HttpCode(HttpStatus.CREATED)
+  async verifySmsCode(
+    @Body() data: VerifySmsCodeDto
+  ): Promise<UserInterfaces.LogInResponse> {
+    return this.userService.verifySmsCode(data);
+  }
+
+  @Put('resend-sms-code')
+  @ApiBody({ type: ResendSmsCodeDto })
+  @HttpCode(HttpStatus.ACCEPTED)
+  async resendSmsCode(
+    @Body() data: ResendSmsCodeDto
+  ): Promise<UserInterfaces.Response> {
+    return this.userService.resendSmsCode(data);
   }
 
   @Put('forgot-pwd')

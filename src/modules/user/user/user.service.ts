@@ -17,9 +17,11 @@ import {
 } from 'types/global';
 import {
   UserServiceCommands as Commands,
+  ResendSmsCodeDto,
   UserCreateDto,
   UserUpdateDto,
   UserUpdateMeDto,
+  VerifySmsCodeDto,
 } from 'types/user/user';
 import { UserInterfaces } from 'types/user/user';
 import { CheckUserPermissionDto } from 'types/user/user/dto/check-permission.dto';
@@ -152,9 +154,67 @@ export class UserService {
 
     const response: UserInterfaces.Response = await lastValueFrom(
       this.adminClient.send<UserInterfaces.Response, UserInterfaces.Request>(
-        { cmd: Commands.CREATE },
+        { cmd: Commands.CREATE_CLIENT },
         data
       )
+    );
+
+    this.logger.debug(`Method: ${methodName} - Response: `, response);
+
+    return response;
+  }
+
+  async verifySmsCode(
+    data: VerifySmsCodeDto
+  ): Promise<UserInterfaces.LogInResponse> {
+    const methodName: string = this.verifySmsCode.name;
+
+    this.logger.debug(`Method: ${methodName} - Request: `, data);
+
+    const user: UserInterfaces.Response = await lastValueFrom(
+      this.adminClient.send<
+        UserInterfaces.Response,
+        UserInterfaces.VerifySmsCodeRequest
+      >({ cmd: Commands.VERIFY_SMS_CODE }, data)
+    );
+
+    if (user?.error) {
+      throw new UnauthorizedException(user?.error?.error);
+    }
+
+    this.logger.debug(`Method: ${methodName} - Role: `, user?.role?.name);
+
+    const accessToken = this.jwtService.sign(
+      {
+        userId: user.id,
+        roleId: user.roleId,
+      },
+      { expiresIn: JwtConfig.expiresIn }
+    );
+
+    const response: UserInterfaces.LogInResponse = {
+      accessToken,
+      permissions: UserPermissions[user?.role?.name],
+      role: user?.role?.name,
+    };
+
+    this.logger.debug(`Method: ${methodName} - Response: `, response);
+
+    return response;
+  }
+
+  async resendSmsCode(
+    data: ResendSmsCodeDto
+  ): Promise<UserInterfaces.Response> {
+    const methodName: string = this.resendSmsCode.name;
+
+    this.logger.debug(`Method: ${methodName} - Request: `, data);
+
+    const response: UserInterfaces.Response = await lastValueFrom(
+      this.adminClient.send<
+        UserInterfaces.Response,
+        UserInterfaces.ResendSmsCodeRequest
+      >({ cmd: Commands.RESEND_SMS_CODE }, data)
     );
 
     this.logger.debug(`Method: ${methodName} - Response: `, response);
