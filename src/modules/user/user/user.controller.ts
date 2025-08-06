@@ -27,6 +27,7 @@ import { UserLogInDto } from 'types/user/user/dto/log-in-user.dto';
 import { UserService } from './user.service';
 import { LanguageRequestDto, ListQueryDto } from 'types/global';
 import { UserForgetPwdDto } from 'types/user/user/dto/forget-pwd.dto';
+import { BusinessUserLogInDto } from 'types/user/user/dto/log-in-business-user.dto';
 
 @ApiBearerAuth()
 @ApiTags('user')
@@ -41,6 +42,15 @@ export class UserController {
     @Body() data: UserLogInDto
   ): Promise<UserInterfaces.LogInResponse> {
     return this.userService.logIn(data);
+  }
+
+  @Post('business/log-in')
+  @ApiBody({ type: BusinessUserLogInDto })
+  @HttpCode(HttpStatus.OK)
+  async logInBisness(
+    @Body() data: BusinessUserLogInDto
+  ): Promise<UserInterfaces.ResponseLoginBusinessUser> {
+    return this.userService.logInBusiness(data);
   }
 
   // @Get()

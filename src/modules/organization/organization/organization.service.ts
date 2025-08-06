@@ -1,12 +1,13 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import { ORGANIZATION } from 'types/config';
-import { DeleteDto, GetOneDto } from 'types/global';
+import { CreatedByEnum, DeleteDto, GetOneDto } from 'types/global';
 import {
   OrganizationCreateDto,
   OrganizationInterfaces,
   OrganizationServiceCommands as Commands,
+  OrganizationBusinessCreateDto,
 } from 'types/organization/organization';
 import * as Multer from 'multer';
 import { GoogleCloudStorageService } from 'src/modules/file-upload/google-cloud-storage.service';
@@ -21,13 +22,17 @@ import { MyOrganizationFilterDto } from 'types/organization/organization/dto/fil
 import { OrganizationDeleteDto } from 'types/organization/organization/dto/delete-organization.dto';
 import { OrganizationRestoreDto } from 'types/organization/organization/dto/get-restore-organization.dto';
 import { UnconfirmOrganizationFilterDto } from 'types/organization/organization/dto/filter-unconfirm-organization.dto';
+import { OrganizationFilterBusinessDto } from 'types/organization/organization/dto/filter-business.dto';
+import { UserService } from 'src/modules/user/user/user.service';
 
 @Injectable()
 export class OrganizationService {
   private logger = new Logger(OrganizationService.name);
   constructor(
     @Inject(ORGANIZATION) private adminClient: ClientProxy,
-    private readonly googleCloudStorageService: GoogleCloudStorageService
+    @Inject(forwardRef(() => UserService))
+    private readonly userService: UserService,
+    private readonly googleCloudStorageService: GoogleCloudStorageService,
   ) {}
 
   async getListOrganization(
@@ -43,7 +48,6 @@ export class OrganizationService {
     // query.logData = userData?.user;
     query.userId = userId;
 
-
     this.logger.debug(
       `Method: ${methodName} - Request: `,
       OrganizationFilterDto
@@ -54,6 +58,29 @@ export class OrganizationService {
         OrganizationInterfaces.Response[],
         OrganizationFilterDto
       >({ cmd: Commands.GET_ALL_LIST }, query)
+    );
+    this.logger.debug(`Method: ${methodName} - Response: `, response);
+    return response;
+  }
+
+  async getOrganizationBusiness(
+    query: OrganizationFilterBusinessDto,
+    userNumericId: string,
+    role: string,
+    userId: number
+  ): Promise<OrganizationInterfaces.Response[]> {
+    const methodName: string = this.getOrganizationBusiness.name;
+
+    this.logger.debug(
+      `Method: ${methodName} - Request: `,
+      OrganizationFilterBusinessDto
+    );
+
+    const response = await lastValueFrom(
+      this.adminClient.send<
+        OrganizationInterfaces.Response[],
+        OrganizationFilterBusinessDto
+      >({ cmd: Commands.GET_BUSINESS }, query)
     );
     this.logger.debug(`Method: ${methodName} - Response: `, response);
     return response;
@@ -158,6 +185,67 @@ export class OrganizationService {
     );
     this.logger.debug(`Method: ${methodName} - Response: `, response);
     return response;
+  }
+
+  async createBusiness(
+    data: OrganizationBusinessCreateDto
+  ): Promise<OrganizationInterfaces.ResponseBusiness> {
+    const methodName: string = this.create.name;
+
+    const responseUser = await this.userService.createBusiness({
+      phoneNumber: data.phoneNumber,
+    });
+
+    this.logger.debug(`Method: ${methodName} - Response user: `, responseUser);
+
+    let orgCreate: OrganizationCreateDto = {
+      name: 'prosta',
+      certificate: data.certificate,
+      inn: data.inn,
+      address: data.address,
+      staffNumber: responseUser.numericId,
+      role: CreatedByEnum.Business,
+      paymentTypes: {
+        cash: false,
+        terminal: false,
+        transfer: false,
+      },
+      workTime: {},
+      phone: {
+        phones: [
+          {
+            phone: data.phoneNumber,
+            phoneTypeId: null,
+            isSecret: false,
+          },
+        ],
+      },
+      productService: {
+        productServices: [],
+      },
+      nearby: {
+        nearbees: [],
+      },
+      social: {},
+      PhotoLink: [],
+    };
+
+    this.logger.debug(`Method: ${methodName} - Request: `, data);
+
+    const response = await lastValueFrom(
+      this.adminClient.send<
+        OrganizationInterfaces.Response,
+        OrganizationInterfaces.Request
+      >({ cmd: Commands.CREATE }, orgCreate)
+    );
+    this.logger.debug(`Method: ${methodName} - Response: `, response);
+
+    if (response) {
+      const sendSms = await this.userService.logInBusiness({
+        phoneNumber: data.phoneNumber,
+      });
+      return sendSms;
+    }
   }
 
   async update(

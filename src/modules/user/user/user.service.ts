@@ -1,4 +1,7 @@
+import { OrganizationService } from './../../organization/organization/organization.service';
+import { User } from './../../../common/decorators/user.decorator';
 import {
+  forwardRef,
   HttpException,
   Inject,
   Injectable,
@@ -10,6 +13,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import { USER } from 'types/config';
 import {
+  CreatedByEnum,
   DeleteDto,
   GetOneDto,
   ListQueryDto,
@@ -17,6 +21,7 @@ import {
 } from 'types/global';
 import {
   UserServiceCommands as Commands,
+  CreateBusinessUserDto,
   ResendSmsCodeDto,
   UserCreateDto,
   UserUpdateDto,
@@ -28,6 +33,7 @@ import { CheckUserPermissionDto } from 'types/user/user/dto/check-permission.dto
 import { UserLogInDto } from 'types/user/user/dto/log-in-user.dto';
 import { JwtConfig } from 'src/common/config/app.config';
 import { UserForgetPwdDto } from 'types/user/user/dto/forget-pwd.dto';
+import { BusinessUserLogInDto } from 'types/user/user/dto/log-in-business-user.dto';
 
 @Injectable()
 export class UserService {
@@ -35,6 +41,8 @@ export class UserService {
 
   constructor(
     @Inject(USER) private adminClient: ClientProxy,
+    @Inject(forwardRef(() => OrganizationService))
+    private readonly organizationService: OrganizationService,
     private readonly jwtService: JwtService
   ) {}
 
@@ -69,6 +77,48 @@ export class UserService {
       permissions: UserPermissions[user?.role?.name],
       role: user?.role?.name,
     };
+
+    this.logger.debug(`Method: ${methodName} - Response: `, response);
+
+    return response;
+  }
+
+  async logInBusiness(
+    data: BusinessUserLogInDto
+  ): Promise<UserInterfaces.ResponseLoginBusinessUser> {
+    const methodName: string = this.logInBusiness.name;
+
+    this.logger.debug(`Method: ${methodName} - Request: `, data);
+
+    const response = await lastValueFrom(
+      this.adminClient.send<
+        UserInterfaces.ResponseLoginBusinessUser,
+        UserInterfaces.LogInBusinessUserRequest
+      >({ cmd: Commands.LOG_IN_BUSINESS }, data)
+    );
+
+    if (response?.error) {
+      throw new UnauthorizedException(response?.error?.error);
+    }
+
+    this.logger.debug(`Method: ${methodName} - Response: `, response);
+
+    return response;
+  }
+
+  async createBusiness(
+    data: CreateBusinessUserDto
+  ): Promise<UserInterfaces.Response> {
+    const methodName: string = this.createBusiness.name;
+
+    this.logger.debug(`Method: ${methodName} - Request: `, data);
+
+    const response: UserInterfaces.Response = await lastValueFrom(
+      this.adminClient.send<
+        UserInterfaces.Response,
+        UserInterfaces.createBusinessUserRequest
+      >({ cmd: Commands.CREATE_BUSINESS_USER }, data)
+    );
 
     this.logger.debug(`Method: ${methodName} - Response: `, response);
 
@@ -183,7 +233,38 @@ export class UserService {
     }
 
     this.logger.debug(`Method: ${methodName} - Role: `, user?.role?.name);
+console.log('user', user,);
 
+    if (user.role?.name == CreatedByEnum.Business) {
+      const findMyOrganization: any =
+        await this.organizationService.getMyOrganization(
+          { all: true ,page: 1, limit: 10, status: null },
+          user.numericId,
+          user.role.name
+        );
+      let myOrgId = findMyOrganization?.data?.[0]?.organizationId;
+      console.log(myOrgId, 'myOrgId');
+      
+       const accessToken = this.jwtService.sign(
+         {
+           userId: user.id,
+           roleId: user.roleId,
+           organizationId: myOrgId,
+         },
+         { expiresIn: JwtConfig.expiresIn }
+       );
+
+       const response: UserInterfaces.LogInResponse = {
+         accessToken,
+         permissions: UserPermissions[user?.role?.name],
+         role: user?.role?.name,
+       };
+
+       this.logger.debug(`Method: ${methodName} - Response: `, response);
+
+       return response;
+      
+    }
     const accessToken = this.jwtService.sign(
       {
         userId: user.id,

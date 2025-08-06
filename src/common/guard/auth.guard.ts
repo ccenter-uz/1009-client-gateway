@@ -29,6 +29,9 @@ export class AuthGuard implements CanActivate {
     if (path === '/user') return true;
     if (path === '/user/verify-sms-code') return true;
     if (path === '/user/resend-sms-code') return true;
+    if (path === '/organization/business') return true;
+    if (path === '/user/business/log-in') return true;
+
 
     console.log(request.route.path, 'PATH');
 
@@ -40,6 +43,7 @@ export class AuthGuard implements CanActivate {
       roleId: number;
       userId: number;
       exp?: number;
+      organizationId?: number;
     };*/
 
     const rolePermissions = await this.userService.checkPermission({
@@ -62,6 +66,7 @@ export class AuthGuard implements CanActivate {
         fullName: user?.fullName,
         role: user.role.name,
       },
+      organzizationId: decoded?.organizationId,
       path,
       method,
     };
