@@ -27,6 +27,7 @@ import { UserLogInDto } from 'types/user/user/dto/log-in-user.dto';
 import { UserService } from './user.service';
 import { LanguageRequestDto, ListQueryDto } from 'types/global';
 import { UserForgetPwdDto } from 'types/user/user/dto/forget-pwd.dto';
+import { BusinessUserLogInDto } from 'types/user/user/dto/log-in-business-user.dto';
 
 @ApiBearerAuth()
 @ApiTags('user')
@@ -41,6 +42,15 @@ export class UserController {
     @Body() data: UserLogInDto
   ): Promise<UserInterfaces.LogInResponse> {
     return this.userService.logIn(data);
+  }
+
+  @Post('site/log-in')
+  @ApiBody({ type: BusinessUserLogInDto })
+  @HttpCode(HttpStatus.OK)
+  async logInBisness(
+    @Body() data: BusinessUserLogInDto
+  ): Promise<UserInterfaces.ResponseLoginBusinessUser> {
+    return this.userService.logInBusiness(data);
   }
 
   // @Get()
@@ -137,19 +147,19 @@ export class UserController {
     });
   }
 
-  // @Delete(':id')
-  // @HttpCode(HttpStatus.OK)
-  // async delete(
-  //   @Req() request: Request,
-  //   @Param('id', ParseIntPipe) id: number,
-  //   @Query('delete') deleteQuery?: boolean
-  // ): Promise<UserInterfaces.Response> {
-  //   return this.userService.delete({
-  //     id,
-  //     delete: deleteQuery,
-  //     logData: request.body['userData'],
-  //   });
-  // }
+  @Delete('delete-me')
+  @HttpCode(HttpStatus.OK)
+  async delete(
+    @Req() request: Request,
+    @Query('delete') deleteQuery?: boolean
+  ): Promise<UserInterfaces.Response> {
+    
+    return this.userService.delete({
+      id: +request.body['userData']?.user.id,
+      delete: deleteQuery,
+      logData: request.body['userData'],
+    });
+  }
 
   // @Put(':id/restore')
   // @HttpCode(HttpStatus.OK)
