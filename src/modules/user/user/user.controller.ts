@@ -44,7 +44,7 @@ export class UserController {
     return this.userService.logIn(data);
   }
 
-  @Post('business/log-in')
+  @Post('site/log-in')
   @ApiBody({ type: BusinessUserLogInDto })
   @HttpCode(HttpStatus.OK)
   async logInBisness(
@@ -147,19 +147,19 @@ export class UserController {
     });
   }
 
-  // @Delete(':id')
-  // @HttpCode(HttpStatus.OK)
-  // async delete(
-  //   @Req() request: Request,
-  //   @Param('id', ParseIntPipe) id: number,
-  //   @Query('delete') deleteQuery?: boolean
-  // ): Promise<UserInterfaces.Response> {
-  //   return this.userService.delete({
-  //     id,
-  //     delete: deleteQuery,
-  //     logData: request.body['userData'],
-  //   });
-  // }
+  @Delete('delete-me')
+  @HttpCode(HttpStatus.OK)
+  async delete(
+    @Req() request: Request,
+    @Query('delete') deleteQuery?: boolean
+  ): Promise<UserInterfaces.Response> {
+    
+    return this.userService.delete({
+      id: +request.body['userData']?.user.id,
+      delete: deleteQuery,
+      logData: request.body['userData'],
+    });
+  }
 
   // @Put(':id/restore')
   // @HttpCode(HttpStatus.OK)

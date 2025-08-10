@@ -29,10 +29,11 @@ export class AuthGuard implements CanActivate {
     if (path === '/user') return true;
     if (path === '/user/verify-sms-code') return true;
     if (path === '/user/resend-sms-code') return true;
-    if (path === '/organization/business') return true;
-    if (path === '/user/business/log-in') return true;
+    if (path === '/organization/site') return true;
+    if (path === '/user/site/log-in') return true;
+    if (path === '/organization/site/search/:name') return true;
 
-
+ 
     console.log(request.route.path, 'PATH');
 
     if (!token) {
@@ -66,7 +67,7 @@ export class AuthGuard implements CanActivate {
         fullName: user?.fullName,
         role: user.role.name,
       },
-      organzizationId: decoded?.organizationId,
+      organizationId: decoded?.organizationId,
       path,
       method,
     };

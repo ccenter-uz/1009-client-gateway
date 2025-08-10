@@ -1,6 +1,7 @@
 import { Storage } from '@google-cloud/storage';
 import { registerAs } from '@nestjs/config';
 import { resolve } from 'path';
+import * as dotenv from 'dotenv';
 import * as process from 'process';
 import { CONFIG_APP_TOKEN, CONFIG_SERVICES_RMQ_TOKEN } from 'types/config';
 
@@ -72,4 +73,14 @@ export const keyFilename = resolve(
 export const JwtConfig = {
   secretKey: process.env.SECRET_KEY || 'secret-key',
   expiresIn: process.env.EXPIRES_IN || '10d',
+};
+
+
+export const MinioConfig = {
+  host: process.env.MINIO_ENDPOINT || '192.168.100.31',
+  port: +process.env.MINIO_PORT || 9000,
+  useSSL: false,
+  accessKey: process.env.MINIO_ACCESS_KEY || 'minioadmin',
+  secretKey: process.env.MINIO_SECRET_KEY || 'minioadmin',
+  bucketName: process.env.MINIO_BUCKET_NAME || '1009-admin',
 };

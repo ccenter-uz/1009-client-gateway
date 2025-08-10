@@ -233,37 +233,34 @@ export class UserService {
     }
 
     this.logger.debug(`Method: ${methodName} - Role: `, user?.role?.name);
-console.log('user', user,);
 
     if (user.role?.name == CreatedByEnum.Business) {
       const findMyOrganization: any =
         await this.organizationService.getMyOrganization(
-          { all: true ,page: 1, limit: 10, status: null },
+          { all: true, page: 1, limit: 10, status: null },
           user.numericId,
           user.role.name
         );
       let myOrgId = findMyOrganization?.data?.[0]?.organizationId;
-      console.log(myOrgId, 'myOrgId');
-      
-       const accessToken = this.jwtService.sign(
-         {
-           userId: user.id,
-           roleId: user.roleId,
-           organizationId: myOrgId,
-         },
-         { expiresIn: JwtConfig.expiresIn }
-       );
 
-       const response: UserInterfaces.LogInResponse = {
-         accessToken,
-         permissions: UserPermissions[user?.role?.name],
-         role: user?.role?.name,
-       };
+      const accessToken = this.jwtService.sign(
+        {
+          userId: user.id,
+          roleId: user.roleId,
+          organizationId: myOrgId,
+        },
+        { expiresIn: JwtConfig.expiresIn }
+      );
 
-       this.logger.debug(`Method: ${methodName} - Response: `, response);
+      const response: UserInterfaces.LogInResponse = {
+        accessToken,
+        permissions: UserPermissions[user?.role?.name],
+        role: user?.role?.name,
+      };
 
-       return response;
-      
+      this.logger.debug(`Method: ${methodName} - Response: `, response);
+
+      return response;
     }
     const accessToken = this.jwtService.sign(
       {

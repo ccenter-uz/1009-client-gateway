@@ -24,6 +24,8 @@ import { OrganizationRestoreDto } from 'types/organization/organization/dto/get-
 import { UnconfirmOrganizationFilterDto } from 'types/organization/organization/dto/filter-unconfirm-organization.dto';
 import { OrganizationFilterBusinessDto } from 'types/organization/organization/dto/filter-business.dto';
 import { UserService } from 'src/modules/user/user/user.service';
+import { MinioService } from 'src/modules/minio/minio.service';
+import { MinioConfig } from 'src/common/config/app.config';
 
 @Injectable()
 export class OrganizationService {
@@ -33,6 +35,7 @@ export class OrganizationService {
     @Inject(forwardRef(() => UserService))
     private readonly userService: UserService,
     private readonly googleCloudStorageService: GoogleCloudStorageService,
+    private readonly Minioservice: MinioService
   ) {}
 
   async getListOrganization(
@@ -81,6 +84,22 @@ export class OrganizationService {
         OrganizationInterfaces.Response[],
         OrganizationFilterBusinessDto
       >({ cmd: Commands.GET_BUSINESS }, query)
+    );
+    this.logger.debug(`Method: ${methodName} - Response: `, response);
+    return response;
+  }
+  async getOrganizationSearch(
+    name: string
+  ): Promise<OrganizationInterfaces.Response[]> {
+    const methodName: string = this.getOrganizationSearch.name;
+
+    this.logger.debug(`Method: ${methodName} - Request: `, name);
+
+    const response = await lastValueFrom(
+      this.adminClient.send<OrganizationInterfaces.Response[], { name }>(
+        { cmd: Commands.GET_SEARCH },
+        { name }
+      )
     );
     this.logger.debug(`Method: ${methodName} - Response: `, response);
     return response;
@@ -148,6 +167,23 @@ export class OrganizationService {
     return response;
   }
 
+  async getByIdVersion(
+    data: GetOneDto
+  ): Promise<OrganizationInterfaces.Response> {
+    const methodName: string = this.getByIdVersion.name;
+
+    this.logger.debug(`Method: ${methodName} - Request: `, data);
+
+    const response = lastValueFrom(
+      this.adminClient.send<OrganizationInterfaces.Response, GetOneDto>(
+        { cmd: CommmandsVersion.GET_BY_ID },
+        data
+      )
+    );
+    this.logger.debug(`Method: ${methodName} - Response: `, response);
+    return response;
+  }
+
   async create(
     data: OrganizationCreateDto,
     role: string,
@@ -194,12 +230,12 @@ export class OrganizationService {
 
     const responseUser = await this.userService.createBusiness({
       phoneNumber: data.phoneNumber,
+      email: data.email,
     });
 
     this.logger.debug(`Method: ${methodName} - Response user: `, responseUser);
 
     let orgCreate: OrganizationCreateDto = {
-      name: 'prosta',
       certificate: data.certificate,
       inn: data.inn,
       address: data.address,
@@ -250,18 +286,43 @@ export class OrganizationService {
 
   async update(
     data: OrganizationVersionUpdateDto,
-    role: string,
-    userNumericId: string,
-    files: Array<Multer.File>
+    files: {
+      photos?: Multer.File[];
+      logo?: Multer.File[];
+      banner?: Multer.File[];
+    }
   ): Promise<OrganizationVersionInterfaces.Response> {
     const methodName: string = this.update.name;
 
-    const fileLinks = await this.googleCloudStorageService.uploadFiles(files);
+    const fileLinks = await this.Minioservice.uploadFiles(files?.photos || []);
+
+    let logoLink = data.logoLink;
+    if (files?.logo?.length > 0) {
+      let logoLinks = await this.Minioservice.uploadFiles(
+        files.logo,
+        MinioConfig.bucketName
+      );
+      logoLink = logoLinks[0]?.link;
+    }
+    let site = typeof data.site == 'string' ? JSON.parse(data.site) : data.site;
+    let bannerUrl = site?.banner;
+    if (files?.banner?.length > 0) {
+      let bannerUrls = await this.Minioservice.uploadFiles(
+        files.logo,
+        MinioConfig.bucketName
+      );
+      bannerUrl = bannerUrls[0]?.link;
+    }
+
     data = {
       ...data,
-      role,
-      staffNumber: userNumericId,
+      social: data.social,
       PhotoLink: fileLinks,
+      logoLink,
+      site: {
+        ...site,
+        banner: bannerUrl,
+      },
       phone:
         typeof data.phone == 'string' ? JSON.parse(data.phone) : data.phone,
       productService:
@@ -278,7 +339,7 @@ export class OrganizationService {
 
     this.logger.debug(`Method: ${methodName} - Request: `, data);
 
-    const response = lastValueFrom(
+    const response = await lastValueFrom(
       this.adminClient.send<
         OrganizationVersionInterfaces.Response,
         OrganizationVersionInterfaces.Update

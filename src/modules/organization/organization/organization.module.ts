@@ -5,11 +5,13 @@ import { ClientsModule } from '@nestjs/microservices';
 import { initRmqClient, ORGANIZATION } from 'types/config';
 import { GoogleCloudStorageModule } from 'src/modules/file-upload/google-cloud-storage.module';
 import { UserModule } from 'src/modules/user/user/user.module';
+import { MinioModule } from 'src/modules/minio/minio.module';
 
 @Module({
   imports: [
     ClientsModule.registerAsync([initRmqClient(ORGANIZATION)]),
     GoogleCloudStorageModule,
+    MinioModule,
     forwardRef(() => UserModule), 
   ],
   controllers: [OrganizationController],
