@@ -341,8 +341,6 @@ export class OrganizationService {
     };
 
     this.logger.debug(`Method: ${methodName} - Request: `, data);
-console.log(data, 'aasssss');
-
     const response = await lastValueFrom(
       this.adminClient.send<
         OrganizationVersionInterfaces.Response,

@@ -76,14 +76,6 @@ export const JwtConfig = {
   expiresIn: process.env.EXPIRES_IN || '10d',
 };
 
-console.log(process.env.MINIO_ENDPOINT, process.env.MINIO_PORT, {
-  host: process.env.MINIO_ENDPOINT || '192.168.100.31',
-  port: +process.env.MINIO_PORT || 9000,
-  useSSL: false,
-  accessKey: process.env.MINIO_ACCESS_KEY || 'minioadmin',
-  secretKey: process.env.MINIO_SECRET_KEY || 'minioadmin',
-  bucketName: process.env.MINIO_BUCKET_NAME || '1009-admin',
-});
 
 export const MinioConfig = {
   host: process.env.MINIO_ENDPOINT || '192.168.100.31',
