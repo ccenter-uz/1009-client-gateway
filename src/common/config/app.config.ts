@@ -1,9 +1,10 @@
 import { Storage } from '@google-cloud/storage';
 import { registerAs } from '@nestjs/config';
 import { resolve } from 'path';
-import * as dotenv from 'dotenv';
 import * as process from 'process';
+import * as dotenv from 'dotenv';
 import { CONFIG_APP_TOKEN, CONFIG_SERVICES_RMQ_TOKEN } from 'types/config';
+dotenv.config();
 
 export const servicesRmqConfig = registerAs(
   CONFIG_SERVICES_RMQ_TOKEN,

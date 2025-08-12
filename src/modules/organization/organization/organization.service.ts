@@ -304,14 +304,21 @@ export class OrganizationService {
       );
       logoLink = logoLinks[0]?.link;
     }
-    let site = typeof data.site == 'string' ? JSON.parse(data.site) : data.site;
-    let bannerUrl = site?.banner;
-    if (files?.banner?.length > 0) {
-      let bannerUrls = await this.Minioservice.uploadFiles(
-        files.logo,
-        MinioConfig.bucketName
-      );
-      bannerUrl = bannerUrls[0]?.link;
+    if (data?.site) {
+      let site =
+        typeof data?.site == 'string' ? JSON.parse(data?.site) : data?.site;
+      let bannerUrl = site?.banner;
+      if (files?.banner?.length > 0) {
+        let bannerUrls = await this.Minioservice.uploadFiles(
+          files.banner,
+          MinioConfig.bucketName
+        );
+        bannerUrl = bannerUrls[0]?.link;
+      }
+      data.site = {
+        ...site,
+        banner: bannerUrl,
+      };
     }
 
     data = {
@@ -319,10 +326,6 @@ export class OrganizationService {
       social: data.social,
       PhotoLink: fileLinks,
       logoLink,
-      site: {
-        ...site,
-        banner: bannerUrl,
-      },
       phone:
         typeof data.phone == 'string' ? JSON.parse(data.phone) : data.phone,
       productService:
@@ -338,7 +341,6 @@ export class OrganizationService {
     };
 
     this.logger.debug(`Method: ${methodName} - Request: `, data);
-
     const response = await lastValueFrom(
       this.adminClient.send<
         OrganizationVersionInterfaces.Response,
