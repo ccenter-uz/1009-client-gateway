@@ -14,7 +14,7 @@ import {
   Query,
   Req,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import {
   ResendSmsCodeDto,
   UserCreateDto,
@@ -28,6 +28,7 @@ import { UserService } from './user.service';
 import { LanguageRequestDto, ListQueryDto } from 'types/global';
 import { UserForgetPwdDto } from 'types/user/user/dto/forget-pwd.dto';
 import { BusinessUserLogInDto } from 'types/user/user/dto/log-in-business-user.dto';
+import { ClientCreateDto } from 'types/user/user/dto/create-client.dto';
 
 @ApiBearerAuth()
 @ApiTags('user')
@@ -40,8 +41,8 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   async logIn(
     @Body() data: UserLogInDto
-  ): Promise<UserInterfaces.LogInResponse> {
-    return this.userService.logIn(data);
+  ): Promise<UserInterfaces.VerifySmsCodeRequest> {
+    return this.userService.logInClient(data);
   }
 
   @Post('site/log-in')
@@ -104,11 +105,16 @@ export class UserController {
   // }
 
   @Post()
-  @ApiBody({ type: UserCreateDto })
+  @ApiBody({ type: ClientCreateDto })
+  @ApiOperation({
+    summary: 'User Sign Up Client',
+    description:
+      'Yangi foydalanuvchini ro‘yxatdan o‘tkazish (sign up). Bu endpoint foydalanuvchi ma’lumotlarini qabul qiladi va tizimga yangi akkaunt yaratadi.',
+  })
   @HttpCode(HttpStatus.CREATED)
   async create(
     @Req() request: Request,
-    @Body() data: UserCreateDto
+    @Body() data: ClientCreateDto
   ): Promise<UserInterfaces.Response> {
     return this.userService.create({
       ...data,
@@ -153,7 +159,6 @@ export class UserController {
     @Req() request: Request,
     @Query('delete') deleteQuery?: boolean
   ): Promise<UserInterfaces.Response> {
-    
     return this.userService.delete({
       id: +request.body['userData']?.user.id,
       delete: deleteQuery,

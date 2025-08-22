@@ -20,6 +20,7 @@ import {
   UserPermissions,
 } from 'types/global';
 import {
+  ClientCreateDto,
   UserServiceCommands as Commands,
   CreateBusinessUserDto,
   ResendSmsCodeDto,
@@ -81,6 +82,29 @@ export class UserService {
     this.logger.debug(`Method: ${methodName} - Response: `, response);
 
     return response;
+  }
+
+  async logInClient(
+    data: UserLogInDto
+  ): Promise<UserInterfaces.VerifySmsCodeRequest> {
+    const methodName: string = this.logIn.name;
+
+    this.logger.debug(`Method: ${methodName} - Request: `, data);
+
+    const user = await lastValueFrom(
+      this.adminClient.send<
+        UserInterfaces.VerifySmsCodeRequest,
+        UserInterfaces.LogInRequest
+      >({ cmd: Commands.LOG_IN_CLIENT }, data)
+    );
+
+    if (user?.error) {
+      throw new UnauthorizedException(user?.error?.error);
+    }
+
+    this.logger.debug(`Method: ${methodName} - Role: `, user);
+
+    return user;
   }
 
   async logInBusiness(
@@ -197,7 +221,7 @@ export class UserService {
     return response;
   }
 
-  async create(data: UserCreateDto): Promise<UserInterfaces.Response> {
+  async create(data: ClientCreateDto): Promise<UserInterfaces.Response> {
     const methodName: string = this.create.name;
 
     this.logger.debug(`Method: ${methodName} - Request: `, data);

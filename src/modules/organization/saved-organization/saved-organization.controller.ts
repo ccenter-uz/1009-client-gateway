@@ -41,20 +41,20 @@ export class SavedOrganizationController {
     });
   }
 
-  @Get(':id')
-  @ApiParam({ name: 'id' })
-  @HttpCode(HttpStatus.OK)
-  async getById(
-    @Param('id', ParseIntPipe) id: number,
-    @Query() query: LanguageRequestDto,
-    @Req() request: Request
-  ): Promise<savedOrganizationInterfaces.Response> {
-    return this.subCategoryService.getById({
-      id,
-      ...query,
-      userId: request['userData']?.user?.id,
-    });
-  }
+  // @Get(':id')
+  // @ApiParam({ name: 'id' })
+  // @HttpCode(HttpStatus.OK)
+  // async getById(
+  //   @Param('id', ParseIntPipe) id: number,
+  //   @Query() query: LanguageRequestDto,
+  //   @Req() request: Request
+  // ): Promise<savedOrganizationInterfaces.Response> {
+  //   return this.subCategoryService.getById({
+  //     id,
+  //     ...query,
+  //     userId: request['userData']?.user?.id,
+  //   });
+  // }
 
   @Post()
   @ApiBody({ type: SavedOrganizationCreateDto })
