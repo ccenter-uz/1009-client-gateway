@@ -21,6 +21,7 @@ import { AdditionalCategoryModule } from './modules/additional-category/addition
 import { SavedOrganizationModule } from './modules/organization/saved-organization/saved-organization.module';
 import { MinioModule } from './modules/minio/minio.module';
 import { OrganizationMonitoringModule } from './modules/monitoring/monitoring.module';
+import { CacheModule } from './modules/cache/cache.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { OrganizationMonitoringModule } from './modules/monitoring/monitoring.mo
     AdditionalCategoryModule,
     MinioModule,
     OrganizationMonitoringModule,
+    CacheModule,
     // GoogleCloudStorageModule,
   ],
   providers: [
