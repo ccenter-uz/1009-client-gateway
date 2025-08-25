@@ -14,12 +14,19 @@ import {
   Query,
   Req,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import {
   ResendSmsCodeDto,
   UserCreateDto,
   UserInterfaces,
   UserUpdateDto,
+  UserUpdateMeBusinessDto,
   UserUpdateMeDto,
   VerifySmsCodeDto,
 } from 'types/user/user';
@@ -41,8 +48,8 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   async logIn(
     @Body() data: UserLogInDto
-  ): Promise<UserInterfaces.VerifySmsCodeRequest> {
-    return this.userService.logInClient(data);
+  ): Promise<UserInterfaces.LogInResponse> {
+    return this.userService.logIn(data);
   }
 
   @Post('site/log-in')
@@ -89,6 +96,19 @@ export class UserController {
     });
   }
 
+  @Put('update-me/site')
+  @ApiBody({ type: UserUpdateMeBusinessDto })
+  @HttpCode(HttpStatus.OK)
+  async updateMeBusiness(
+    @Req() request: Request,
+    @Body() data: Omit<UserUpdateMeBusinessDto, 'id'>
+  ): Promise<UserInterfaces.Response> {
+    return this.userService.updateMe({
+      ...data,
+      id: +request.body['userData'].user.id,
+      logData: request.body['userData'],
+    });
+  }
   // @Get(':id')
   // @ApiParam({ name: 'id' })
   // @HttpCode(HttpStatus.OK)

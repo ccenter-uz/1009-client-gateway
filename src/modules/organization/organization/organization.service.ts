@@ -236,8 +236,10 @@ export class OrganizationService {
     this.logger.debug(`Method: ${methodName} - Response user: `, responseUser);
 
     let orgCreate: OrganizationCreateDto = {
+      name: data.name,
       certificate: data.certificate,
       inn: data.inn,
+      
       address: data.address,
       staffNumber: responseUser.numericId,
       role: CreatedByEnum.Business,

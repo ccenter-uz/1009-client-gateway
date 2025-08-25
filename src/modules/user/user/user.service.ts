@@ -26,6 +26,7 @@ import {
   ResendSmsCodeDto,
   UserCreateDto,
   UserUpdateDto,
+  UserUpdateMeBusinessDto,
   UserUpdateMeDto,
   VerifySmsCodeDto,
 } from 'types/user/user';
@@ -82,29 +83,6 @@ export class UserService {
     this.logger.debug(`Method: ${methodName} - Response: `, response);
 
     return response;
-  }
-
-  async logInClient(
-    data: UserLogInDto
-  ): Promise<UserInterfaces.VerifySmsCodeRequest> {
-    const methodName: string = this.logIn.name;
-
-    this.logger.debug(`Method: ${methodName} - Request: `, data);
-
-    const user = await lastValueFrom(
-      this.adminClient.send<
-        UserInterfaces.VerifySmsCodeRequest,
-        UserInterfaces.LogInRequest
-      >({ cmd: Commands.LOG_IN_CLIENT }, data)
-    );
-
-    if (user?.error) {
-      throw new UnauthorizedException(user?.error?.error);
-    }
-
-    this.logger.debug(`Method: ${methodName} - Role: `, user);
-
-    return user;
   }
 
   async logInBusiness(
@@ -345,7 +323,32 @@ export class UserService {
     }
   }
 
-  async updateMe(data: UserUpdateMeDto): Promise<UserInterfaces.Response> {
+  async updateMe(
+    data: UserUpdateMeBusinessDto
+  ): Promise<UserInterfaces.Response> {
+    try {
+      const methodName: string = this.updateMe.name;
+
+      this.logger.debug(`Method: ${methodName} - Request: `, data);
+
+      const response: UserInterfaces.Response = await lastValueFrom(
+        this.adminClient.send<UserInterfaces.Response, UserInterfaces.UpdateMe>(
+          { cmd: Commands.UPDATE_ME_BUSINESS_BY_ID },
+          data
+        )
+      );
+
+      this.logger.debug(`Method: ${methodName} - Response: `, response);
+
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateMeBusiness(
+    data: UserUpdateMeDto
+  ): Promise<UserInterfaces.Response> {
     try {
       const methodName: string = this.updateMe.name;
 
