@@ -37,6 +37,7 @@ export class SavedOrganizationController {
   ): Promise<savedOrganizationInterfaces.Response[]> {
     return await this.subCategoryService.getAll({
       ...query,
+      savedOrganization: true,
       userId: request['userData']?.user?.id,
     });
   }
