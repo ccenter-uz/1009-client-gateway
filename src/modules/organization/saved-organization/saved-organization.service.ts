@@ -10,6 +10,7 @@ import {
   GetOneSavedOrganizationDto,
   SavedOrganizationCommands as Commands,
   SavedOrganizationFilterDto,
+  savedOrganizationDeleteDto,
 } from 'types/organization/saved-organization';
 import { CityFilterDto } from 'types/organization/city/dto/filter-city.dto';
 
@@ -20,7 +21,6 @@ export class SavedOrganizationService {
   async getAll(
     query: SavedOrganizationFilterDto
   ): Promise<savedOrganizationInterfaces.Response[]> {
-    
     return lastValueFrom(
       this.adminClient.send<
         savedOrganizationInterfaces.Response[],
@@ -28,18 +28,6 @@ export class SavedOrganizationService {
       >({ cmd: Commands.GET_ALL_LIST }, query)
     );
   }
-
-  async getById(
-    data: GetOneSavedOrganizationDto
-  ): Promise<savedOrganizationInterfaces.Response> {
-    return lastValueFrom(
-      this.adminClient.send<savedOrganizationInterfaces.Response, GetOneDto>(
-        { cmd: Commands.GET_BY_ID },
-        data
-      )
-    );
-  }
-
 
   async create(
     data: SavedOrganizationCreateDto
@@ -52,34 +40,14 @@ export class SavedOrganizationService {
     );
   }
 
-  async update(
-    data: savedOrganizationUpdateDto
+  async delete(
+    data: savedOrganizationDeleteDto
   ): Promise<savedOrganizationInterfaces.Response> {
     return lastValueFrom(
       this.adminClient.send<
         savedOrganizationInterfaces.Response,
-        savedOrganizationInterfaces.Update
-      >({ cmd: Commands.UPDATE }, data)
-    );
-  }
-
-  async delete(data: DeleteDto): Promise<savedOrganizationInterfaces.Response> {
-    return lastValueFrom(
-      this.adminClient.send<savedOrganizationInterfaces.Response, DeleteDto>(
-        { cmd: Commands.DELETE },
-        data
-      )
-    );
-  }
-
-  async restore(
-    data: GetOneDto
-  ): Promise<savedOrganizationInterfaces.Response> {
-    return lastValueFrom(
-      this.adminClient.send<savedOrganizationInterfaces.Response, GetOneDto>(
-        { cmd: Commands.RESTORE },
-        data
-      )
+        savedOrganizationDeleteDto
+      >({ cmd: Commands.DELETE }, data)
     );
   }
 }
