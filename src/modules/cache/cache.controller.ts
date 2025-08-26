@@ -25,7 +25,7 @@ import * as Multer from 'multer';
 export class CacheController {
   constructor(private readonly cacheService: CacheService) {}
 
-  @Get(':id')
+  @Get()
   @HttpCode(HttpStatus.OK)
   async getById(@Req() request: Request): Promise<CacheInterfaces.Response> {
     return this.cacheService.getById({
@@ -64,7 +64,7 @@ export class CacheController {
     );
   }
 
-  @Delete(':id')
+  @Delete()
   @HttpCode(HttpStatus.OK)
   async delete(@Req() request: Request): Promise<CacheInterfaces.Response> {
     return this.cacheService.delete({

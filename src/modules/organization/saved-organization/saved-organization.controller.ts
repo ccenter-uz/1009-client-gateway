@@ -42,63 +42,30 @@ export class SavedOrganizationController {
     });
   }
 
-  // @Get(':id')
-  // @ApiParam({ name: 'id' })
-  // @HttpCode(HttpStatus.OK)
-  // async getById(
-  //   @Param('id', ParseIntPipe) id: number,
-  //   @Query() query: LanguageRequestDto,
-  //   @Req() request: Request
-  // ): Promise<savedOrganizationInterfaces.Response> {
-  //   return this.subCategoryService.getById({
-  //     id,
-  //     ...query,
-  //     userId: request['userData']?.user?.id,
-  //   });
-  // }
-
-  @Post()
-  @ApiBody({ type: SavedOrganizationCreateDto })
+  @Post(':organizationId')
+  // @ApiBody({ type: SavedOrganizationCreateDto })
   @HttpCode(HttpStatus.CREATED)
   async create(
-    @Body() data: SavedOrganizationCreateDto,
-    @Req() request: Request
+    @Req() request: Request,
+    @Param('organizationId', ParseIntPipe) id: number
+    // @Body() data: SavedOrganizationCreateDto
   ): Promise<savedOrganizationInterfaces.Response> {
     return this.subCategoryService.create({
-      ...data,
+      organizationId: id,
       userId: request['userData']?.user?.id,
     });
   }
 
-  @Put(':organizationId')
-  @ApiBody({ type: savedOrganizationUpdateDto })
+  @Delete(':organizationId')
   @HttpCode(HttpStatus.OK)
-  async update(
+  async delete(
     @Req() request: Request,
-    @Param('organizationId', ParseIntPipe) id: number,
-    @Body() data: Omit<savedOrganizationUpdateDto, 'id'>
+    @Param('organizationId', ParseIntPipe) id: number
+    // @Query('delete') deleteQuery?: boolean
   ): Promise<savedOrganizationInterfaces.Response> {
-    return this.subCategoryService.update({
-      ...data,
+    return this.subCategoryService.delete({
       id,
       userId: request['userData']?.user?.id,
     });
-  }
-
-  @Delete(':id')
-  @HttpCode(HttpStatus.OK)
-  async delete(
-    @Param('id', ParseIntPipe) id: number,
-    @Query('delete') deleteQuery?: boolean
-  ): Promise<savedOrganizationInterfaces.Response> {
-    return this.subCategoryService.delete({ id, delete: deleteQuery });
-  }
-
-  @Put(':id/restore')
-  @HttpCode(HttpStatus.OK)
-  async restore(
-    @Param('id', ParseIntPipe) id: number
-  ): Promise<savedOrganizationInterfaces.Response> {
-    return this.subCategoryService.restore({ id });
   }
 }
