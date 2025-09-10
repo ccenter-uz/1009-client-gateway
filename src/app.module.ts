@@ -22,6 +22,7 @@ import { SavedOrganizationModule } from './modules/organization/saved-organizati
 import { MinioModule } from './modules/minio/minio.module';
 import { OrganizationMonitoringModule } from './modules/monitoring/monitoring.module';
 import { CacheModule } from './modules/cache/cache.module';
+import { NominatimModule } from './modules/nominatim/nominatim.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { CacheModule } from './modules/cache/cache.module';
     MinioModule,
     OrganizationMonitoringModule,
     CacheModule,
+    NominatimModule,
     // GoogleCloudStorageModule,
   ],
   providers: [
