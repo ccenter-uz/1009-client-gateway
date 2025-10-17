@@ -23,6 +23,7 @@ import { MinioModule } from './modules/minio/minio.module';
 import { OrganizationMonitoringModule } from './modules/monitoring/monitoring.module';
 import { CacheModule } from './modules/cache/cache.module';
 import { NominatimModule } from './modules/nominatim/nominatim.module';
+import { SiteStatisticsModule } from './modules/organization/site-statistics/site-statistics.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { NominatimModule } from './modules/nominatim/nominatim.module';
     CacheModule,
     NominatimModule,
     // GoogleCloudStorageModule,
+    SiteStatisticsModule,
   ],
   providers: [
     {
