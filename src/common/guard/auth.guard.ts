@@ -35,7 +35,6 @@ export class AuthGuard implements CanActivate {
     if (path === '/geocode/search') return true;
     if (path === '/geocode/reverse') return true;
     if (path === '/bisiness-statistics') return true;
-    if (path === '/bisiness-statistics/one') return true;
 
     console.log(request.route.path, 'PATH');
 
