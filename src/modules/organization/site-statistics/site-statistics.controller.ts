@@ -49,30 +49,4 @@ export class SiteStatisticsController {
     return this.siteStatisticsService.create(data);
   }
 
-  // @Put(':id')
-  // @ApiBody({ type: CityUpdateDto })
-  // @HttpCode(HttpStatus.OK)
-  // async update(
-  //   @Param('id', ParseIntPipe) id: number,
-  //   @Body() data: Omit<CityUpdateDto, 'id'>
-  // ): Promise<CityInterfaces.Response> {
-  //   return this.subCategoryService.update({ ...data, id });
-  // }
-
-  // @Delete(':id')
-  // @HttpCode(HttpStatus.OK)
-  // async delete(
-  //   @Param('id', ParseIntPipe) id: number,
-  //   @Query('delete') deleteQuery?: boolean
-  // ): Promise<CityInterfaces.Response> {
-  //   return this.subCategoryService.delete({ id, delete: deleteQuery });
-  // }
-
-  // @Put(':id/restore')
-  // @HttpCode(HttpStatus.OK)
-  // async restore(
-  //   @Param('id', ParseIntPipe) id: number
-  // ): Promise<CityInterfaces.Response> {
-  //   return this.subCategoryService.restore({ id });
-  // }
 }

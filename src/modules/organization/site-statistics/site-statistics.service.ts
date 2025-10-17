@@ -18,7 +18,6 @@ export class SiteStatisticsService {
     private readonly nominatimService: NominatimService
   ) {}
 
-
   async getById(data: GetOneDto): Promise<siteStatisticsInterfaces.Response> {
     return lastValueFrom(
       this.adminClient.send<siteStatisticsInterfaces.Response, GetOneDto>(
@@ -35,26 +34,17 @@ export class SiteStatisticsService {
       lat: String(data.address[0]),
       lon: String(data.address[1]),
     });
-    console.log(findRegion);
-    
 
     let region = null;
 
     if (findRegion && findRegion.address.city) {
-      console.log('1');
-      
       region = findRegion.address.city;
     } else if (findRegion && findRegion.address.state) {
-      console.log('2');
-
       region = findRegion.address.state;
     }
-    console.log(region);
-    
 
     if (region) {
       const lowerRegion = region.toLowerCase();
-
       const matched = Regions.find((r) => lowerRegion.includes(r));
 
       if (matched) {
@@ -65,7 +55,6 @@ export class SiteStatisticsService {
     }
 
     data.addressCity = region;
-console.log(data);
 
     return await lastValueFrom(
       this.adminClient.send<
