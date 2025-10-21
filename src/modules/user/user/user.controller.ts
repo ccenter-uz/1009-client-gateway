@@ -28,6 +28,7 @@ import {
   UserUpdateDto,
   UserUpdateMeBusinessDto,
   UserUpdateMeDto,
+  UserUpdateSmsCodeDto,
   VerifySmsCodeDto,
 } from 'types/user/user';
 import { UserLogInDto } from 'types/user/user/dto/log-in-user.dto';
@@ -158,6 +159,15 @@ export class UserController {
     @Body() data: ResendSmsCodeDto
   ): Promise<UserInterfaces.Response> {
     return this.userService.resendSmsCode(data);
+  }
+
+  @Put('update-sms-code')
+  @ApiBody({ type: UserUpdateSmsCodeDto })
+  @HttpCode(HttpStatus.ACCEPTED)
+  async updateSmsCode(
+    @Body() data: UserUpdateSmsCodeDto
+  ): Promise<UserInterfaces.Response> {
+    return this.userService.updateSmsCode(data);
   }
 
   @Put('forgot-pwd')

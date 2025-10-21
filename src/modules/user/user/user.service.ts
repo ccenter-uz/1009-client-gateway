@@ -28,6 +28,7 @@ import {
   UserUpdateDto,
   UserUpdateMeBusinessDto,
   UserUpdateMeDto,
+  UserUpdateSmsCodeDto,
   VerifySmsCodeDto,
 } from 'types/user/user';
 import { UserInterfaces } from 'types/user/user';
@@ -295,6 +296,25 @@ export class UserService {
         UserInterfaces.Response,
         UserInterfaces.ResendSmsCodeRequest
       >({ cmd: Commands.RESEND_SMS_CODE }, data)
+    );
+
+    this.logger.debug(`Method: ${methodName} - Response: `, response);
+
+    return response;
+  }
+
+  async updateSmsCode(
+    data: UserUpdateSmsCodeDto
+  ): Promise<UserInterfaces.Response> {
+    const methodName: string = this.resendSmsCode.name;
+
+    this.logger.debug(`Method: ${methodName} - Request: `, data);
+
+    const response: UserInterfaces.Response = await lastValueFrom(
+      this.adminClient.send<
+        UserInterfaces.Response,
+        UserInterfaces.UpdateSmsCode
+      >({ cmd: Commands.UPDATE_SMS_CODE }, data)
     );
 
     this.logger.debug(`Method: ${methodName} - Response: `, response);
