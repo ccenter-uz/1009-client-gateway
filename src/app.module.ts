@@ -24,6 +24,7 @@ import { OrganizationMonitoringModule } from './modules/monitoring/monitoring.mo
 import { CacheModule } from './modules/cache/cache.module';
 import { NominatimModule } from './modules/nominatim/nominatim.module';
 import { SiteStatisticsModule } from './modules/organization/site-statistics/site-statistics.module';
+import { NotificationsModule } from './modules/organization/notification/notifications.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { SiteStatisticsModule } from './modules/organization/site-statistics/sit
     NominatimModule,
     // GoogleCloudStorageModule,
     SiteStatisticsModule,
+    NotificationsModule,
   ],
   providers: [
     {

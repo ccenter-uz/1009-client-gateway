@@ -9,6 +9,7 @@ import {
   siteStatisticsCreateDto,
   siteStatisticsInterfaces,
   siteStatisticsFilterDto,
+  GetSiteStatisticsDto,
 } from 'types/organization/site-statistics';
 
 @Injectable()
@@ -18,12 +19,17 @@ export class SiteStatisticsService {
     private readonly nominatimService: NominatimService
   ) {}
 
-  async getById(data: GetOneDto): Promise<siteStatisticsInterfaces.Response> {
+  async getById(
+    id: number,
+    data: GetSiteStatisticsDto
+  ): Promise<siteStatisticsInterfaces.Response> {
+    data.id = id;
+
     return lastValueFrom(
-      this.adminClient.send<siteStatisticsInterfaces.Response, GetOneDto>(
-        { cmd: Commands.GET_BY_ID },
-        data
-      )
+      this.adminClient.send<
+        siteStatisticsInterfaces.Response,
+        GetSiteStatisticsDto
+      >({ cmd: Commands.GET_BY_ID }, data)
     );
   }
 
