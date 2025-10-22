@@ -35,8 +35,8 @@ export class AuthGuard implements CanActivate {
     if (path === '/geocode/search') return true;
     if (path === '/geocode/reverse') return true;
     if (path === '/bisiness-statistics') return true;
-
-    console.log(request.route.path, 'PATH');
+    if (path === '/user/update-sms-code') return true;
+      console.log(request.route.path, 'PATH');
 
     if (!token) {
       throw new ForbiddenException('No token provided');

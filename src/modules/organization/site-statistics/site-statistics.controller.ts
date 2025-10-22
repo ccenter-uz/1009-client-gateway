@@ -20,6 +20,7 @@ import {
   siteStatisticsCreateDto,
   siteStatisticsInterfaces,
   siteStatisticsFilterDto,
+  GetSiteStatisticsDto,
 } from 'types/organization/site-statistics';
 
 @ApiBearerAuth()
@@ -31,13 +32,13 @@ export class SiteStatisticsController {
   @Get('/one')
   @HttpCode(HttpStatus.OK)
   async getById(
-    @Query() query: LanguageRequestDto,
+    @Query() query: GetSiteStatisticsDto,
     @Req() request: Request
   ): Promise<siteStatisticsInterfaces.Response> {
-    return this.siteStatisticsService.getById({
-      id: request['userData']?.organizationId,
-      ...query,
-    });
+    return this.siteStatisticsService.getById(
+      request['userData']?.organizationId,
+      query
+    );
   }
 
   @Post()
@@ -48,5 +49,4 @@ export class SiteStatisticsController {
   ): Promise<siteStatisticsInterfaces.Response> {
     return this.siteStatisticsService.create(data);
   }
-
 }
