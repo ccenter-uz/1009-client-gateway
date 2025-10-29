@@ -16,6 +16,11 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    // Allow non-HTTP contexts (e.g., RMQ, WebSocket) to pass through
+    if (context.getType() !== 'http') {
+      return true;
+    }
+
     const request = context.switchToHttp().getRequest();
     const method = request.method;
     const path = request.route.path.split('v1')[1];
@@ -36,7 +41,7 @@ export class AuthGuard implements CanActivate {
     if (path === '/geocode/reverse') return true;
     if (path === '/bisiness-statistics') return true;
     if (path === '/user/update-sms-code') return true;
-      console.log(request.route.path, 'PATH');
+    console.log(request.route.path, 'PATH');
 
     if (!token) {
       throw new ForbiddenException('No token provided');
@@ -74,7 +79,7 @@ export class AuthGuard implements CanActivate {
       method,
     };
     request.userData = userData;
-console.log(userData, 'userData');
+    console.log(userData, 'userData');
 
     request.body.userData = userData;
 
