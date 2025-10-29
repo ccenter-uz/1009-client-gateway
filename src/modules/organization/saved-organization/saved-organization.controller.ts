@@ -20,7 +20,9 @@ import {
   SavedOrganizationCreateDto,
   savedOrganizationUpdateDto,
   savedOrganizationInterfaces,
+  SavedOrganizationFilterDto,
 } from 'types/organization/saved-organization';
+import { CityFilterDto } from 'types/organization/city/dto/filter-city.dto';
 
 @ApiBearerAuth()
 @ApiTags('saved-organization')
@@ -31,7 +33,8 @@ export class SavedOrganizationController {
   @Get()
   @HttpCode(HttpStatus.OK)
   async getAll(
-    @Query() query: CityFilterDto
+    @Req() request: Request,
+    @Query() query: SavedOrganizationFilterDto
   ): Promise<savedOrganizationInterfaces.Response[]> {
     return await this.subCategoryService.getAll({
       ...query,
