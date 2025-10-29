@@ -21,6 +21,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     let status: number;
     let message: string;
+
+    // === JWT yoki Unauthorized error ===
     if (
       exception instanceof TokenExpiredError &&
       exception instanceof UnauthorizedException
@@ -29,13 +31,27 @@ export class AllExceptionsFilter implements ExceptionFilter {
       message = exception.message;
     }
 
-    status =
-      exception?.response?.statusCode || HttpStatus.INTERNAL_SERVER_ERROR;
+    // === Servicedan kelgan RPC errorlarni ham qo‘llab-quvvatlash ===
+    else if (exception?.error?.statusCode) {
+      // <-- 🟢 Yangi qo‘shildi
+      status = exception.error.statusCode;
+      message = exception.error.message;
+    }
 
-    message =
-      (typeof exception?.response?.message === 'string'
-        ? exception?.response?.message
-        : exception?.response?.message[0]) || 'Internal server error';
+    // === Oddiy HttpException ===
+    else if (exception?.response?.statusCode) {
+      status = exception.response.statusCode;
+      message =
+        (typeof exception.response.message === 'string'
+          ? exception.response.message
+          : exception.response.message?.[0]) || 'Internal server error';
+    }
+
+    // === Default fallback ===
+    else {
+      status = HttpStatus.INTERNAL_SERVER_ERROR;
+      message = exception.message || 'Internal server error';
+    }
 
     this.logger.debug(
       `Exception Filter: ${JSON.stringify(

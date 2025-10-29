@@ -22,15 +22,21 @@ export class AuthGuard implements CanActivate {
     const token = request.headers['authorization']?.split(' ')[1];
 
     if (path === '/user/log-in') return true;
-    if (path === '/organization') return true;
+    if (path === '/organization' && !token) return true;
     if (path === '/city') return true;
     if (path === '/region') return true;
     if (path === '/organization/:id') return true;
     if (path === '/user') return true;
-
-
-
-    console.log(request.route.path, 'PATH');
+    if (path === '/user/verify-sms-code') return true;
+    if (path === '/user/resend-sms-code') return true;
+    if (path === '/organization/site') return true;
+    if (path === '/user/site/log-in') return true;
+    if (path === '/organization/site/search/:name') return true;
+    if (path === '/geocode/search') return true;
+    if (path === '/geocode/reverse') return true;
+    if (path === '/bisiness-statistics') return true;
+    if (path === '/user/update-sms-code') return true;
+      console.log(request.route.path, 'PATH');
 
     if (!token) {
       throw new ForbiddenException('No token provided');
@@ -40,6 +46,7 @@ export class AuthGuard implements CanActivate {
       roleId: number;
       userId: number;
       exp?: number;
+      organizationId?: number;
     };*/
 
     const rolePermissions = await this.userService.checkPermission({
@@ -62,6 +69,7 @@ export class AuthGuard implements CanActivate {
         fullName: user?.fullName,
         role: user.role.name,
       },
+      organizationId: decoded?.organizationId,
       path,
       method,
     };

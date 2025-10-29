@@ -14,17 +14,29 @@ import {
   Query,
   Req,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
 import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
+import {
+  ResendSmsCodeDto,
   UserCreateDto,
   UserInterfaces,
   UserUpdateDto,
+  UserUpdateMeBusinessDto,
   UserUpdateMeDto,
+  UserUpdateSmsCodeDto,
+  VerifySmsCodeDto,
 } from 'types/user/user';
 import { UserLogInDto } from 'types/user/user/dto/log-in-user.dto';
 import { UserService } from './user.service';
 import { LanguageRequestDto, ListQueryDto } from 'types/global';
 import { UserForgetPwdDto } from 'types/user/user/dto/forget-pwd.dto';
+import { BusinessUserLogInDto } from 'types/user/user/dto/log-in-business-user.dto';
+import { ClientCreateDto } from 'types/user/user/dto/create-client.dto';
 
 @ApiBearerAuth()
 @ApiTags('user')
@@ -39,6 +51,15 @@ export class UserController {
     @Body() data: UserLogInDto
   ): Promise<UserInterfaces.LogInResponse> {
     return this.userService.logIn(data);
+  }
+
+  @Post('site/log-in')
+  @ApiBody({ type: BusinessUserLogInDto })
+  @HttpCode(HttpStatus.OK)
+  async logInBisness(
+    @Body() data: BusinessUserLogInDto
+  ): Promise<UserInterfaces.ResponseLoginBusinessUser> {
+    return this.userService.logInBusiness(data);
   }
 
   // @Get()
@@ -56,8 +77,6 @@ export class UserController {
   @Get('get-me')
   @HttpCode(HttpStatus.OK)
   async getMeById(@Req() request: Request): Promise<UserInterfaces.Response> {
-    console.log(request.body['userData'].user.id, 'request.body');
-
     return this.userService.getMeById({
       id: +request.body['userData'].user.id,
       logData: request.body['userData'],
@@ -71,8 +90,6 @@ export class UserController {
     @Req() request: Request,
     @Body() data: Omit<UserUpdateMeDto, 'id'>
   ): Promise<UserInterfaces.Response> {
-    console.log(request.body['userData'], 'request.body');
-
     return this.userService.updateMe({
       ...data,
       id: +request.body['userData'].user.id,
@@ -80,6 +97,19 @@ export class UserController {
     });
   }
 
+  @Put('update-me/site')
+  @ApiBody({ type: UserUpdateMeBusinessDto })
+  @HttpCode(HttpStatus.OK)
+  async updateMeBusiness(
+    @Req() request: Request,
+    @Body() data: Omit<UserUpdateMeBusinessDto, 'id'>
+  ): Promise<UserInterfaces.Response> {
+    return this.userService.updateMe({
+      ...data,
+      id: +request.body['userData'].user.id,
+      logData: request.body['userData'],
+    });
+  }
   // @Get(':id')
   // @ApiParam({ name: 'id' })
   // @HttpCode(HttpStatus.OK)
@@ -96,16 +126,48 @@ export class UserController {
   // }
 
   @Post()
-  @ApiBody({ type: UserCreateDto })
+  @ApiBody({ type: ClientCreateDto })
+  @ApiOperation({
+    summary: 'User Sign Up Client',
+    description:
+      'Yangi foydalanuvchini ro‘yxatdan o‘tkazish (sign up). Bu endpoint foydalanuvchi ma’lumotlarini qabul qiladi va tizimga yangi akkaunt yaratadi.',
+  })
   @HttpCode(HttpStatus.CREATED)
   async create(
     @Req() request: Request,
-    @Body() data: UserCreateDto
+    @Body() data: ClientCreateDto
   ): Promise<UserInterfaces.Response> {
     return this.userService.create({
       ...data,
       logData: request.body['userData'],
     });
+  }
+
+  @Post('verify-sms-code')
+  @ApiBody({ type: VerifySmsCodeDto })
+  @HttpCode(HttpStatus.CREATED)
+  async verifySmsCode(
+    @Body() data: VerifySmsCodeDto
+  ): Promise<UserInterfaces.LogInResponse> {
+    return this.userService.verifySmsCode(data);
+  }
+
+  @Put('resend-sms-code')
+  @ApiBody({ type: ResendSmsCodeDto })
+  @HttpCode(HttpStatus.ACCEPTED)
+  async resendSmsCode(
+    @Body() data: ResendSmsCodeDto
+  ): Promise<UserInterfaces.Response> {
+    return this.userService.resendSmsCode(data);
+  }
+
+  @Put('update-sms-code')
+  @ApiBody({ type: UserUpdateSmsCodeDto })
+  @HttpCode(HttpStatus.ACCEPTED)
+  async updateSmsCode(
+    @Body() data: UserUpdateSmsCodeDto
+  ): Promise<UserInterfaces.Response> {
+    return this.userService.updateSmsCode(data);
   }
 
   @Put('forgot-pwd')
@@ -121,19 +183,18 @@ export class UserController {
     });
   }
 
-  // @Delete(':id')
-  // @HttpCode(HttpStatus.OK)
-  // async delete(
-  //   @Req() request: Request,
-  //   @Param('id', ParseIntPipe) id: number,
-  //   @Query('delete') deleteQuery?: boolean
-  // ): Promise<UserInterfaces.Response> {
-  //   return this.userService.delete({
-  //     id,
-  //     delete: deleteQuery,
-  //     logData: request.body['userData'],
-  //   });
-  // }
+  @Delete('delete-me')
+  @HttpCode(HttpStatus.OK)
+  async delete(
+    @Req() request: Request,
+    @Query('delete') deleteQuery?: boolean
+  ): Promise<UserInterfaces.Response> {
+    return this.userService.delete({
+      id: +request.body['userData']?.user.id,
+      delete: deleteQuery,
+      logData: request.body['userData'],
+    });
+  }
 
   // @Put(':id/restore')
   // @HttpCode(HttpStatus.OK)

@@ -24,11 +24,15 @@ import {
 } from '@nestjs/swagger';
 import { LanguageRequestDto, ListQueryDto } from 'types/global';
 import {
+  OrganizationBusinessCreateDto,
   OrganizationCreateDto,
   OrganizationInterfaces,
   OrganizationUpdateDto,
 } from 'types/organization/organization';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import {
+  FileFieldsInterceptor,
+  FilesInterceptor,
+} from '@nestjs/platform-express';
 import * as Multer from 'multer';
 
 import {
@@ -41,6 +45,7 @@ import { ConfirmDto } from 'types/organization/organization/dto/confirm-organiza
 import { MyOrganizationFilterDto } from 'types/organization/organization/dto/filter-my-organization.dto';
 import { UnconfirmOrganizationFilterDto } from 'types/organization/organization/dto/filter-unconfirm-organization.dto';
 import { OrganizationDeleteDto } from 'types/organization/organization/dto/delete-organization.dto';
+import { OrganizationFilterBusinessDto } from 'types/organization/organization/dto/filter-business.dto';
 
 @ApiBearerAuth()
 @ApiTags('Organization')
@@ -57,7 +62,8 @@ export class OrganizationController {
     return await this.organizationService.getListOrganization(
       query,
       request?.body['userData']?.user?.numericId,
-      request?.body['userData']?.user?.role
+      request?.body['userData']?.user?.role,
+      request?.body['userData']?.user?.id
     );
   }
 
@@ -74,17 +80,40 @@ export class OrganizationController {
     );
   }
 
-//   @Get('unconfirm')
-//   @HttpCode(HttpStatus.OK)
-//   async getUnconfirm(
-//     @Query() query: UnconfirmOrganizationFilterDto,
-//     @Req() request: Request
-//   ): Promise<OrganizationInterfaces.Response[]> {
-//     return await this.organizationService.getUnconfirm(
-//       query,
-//       request.body['userData'].user.numericId
-//     );
-//   }
+  @Get('site')
+  @HttpCode(HttpStatus.OK)
+  async getOrganizationBusiness(
+    @Query() query: OrganizationFilterBusinessDto,
+    @Req() request: Request
+  ): Promise<OrganizationInterfaces.Response[]> {
+    return await this.organizationService.getOrganizationBusiness(
+      query,
+      request?.body['userData']?.user?.numericId,
+      request?.body['userData']?.user?.role,
+      request?.body['userData']?.user?.id
+    );
+  }
+
+  @Get('site/search/:name')
+  @HttpCode(HttpStatus.OK)
+  async getOrganizationSearch(
+    @Param('name') name: string,
+    @Req() request: Request
+  ): Promise<OrganizationInterfaces.Response[]> {
+    return await this.organizationService.getOrganizationSearch(name);
+  }
+
+  //   @Get('unconfirm')
+  //   @HttpCode(HttpStatus.OK)
+  //   async getUnconfirm(
+  //     @Query() query: UnconfirmOrganizationFilterDto,
+  //     @Req() request: Request
+  //   ): Promise<OrganizationInterfaces.Response[]> {
+  //     return await this.organizationService.getUnconfirm(
+  //       query,
+  //       request.body['userData'].user.numericId
+  //     );
+  //   }
 
   @Get(':id')
   @ApiParam({ name: 'id' })
@@ -100,6 +129,36 @@ export class OrganizationController {
     );
   }
 
+  @Get('site/one')
+  @HttpCode(HttpStatus.OK)
+  async getByIdSite(
+    @Query() query: LanguageRequestDto,
+    @Req() request: Request
+  ): Promise<OrganizationInterfaces.Response> {
+    return this.organizationService.getById(
+      {
+        id: request['userData']?.organizationId,
+        ...query,
+      },
+      request['userData'].user.role
+    );
+  }
+
+  @Get('site/version')
+  @HttpCode(HttpStatus.OK)
+  async getByIdVersion(
+    // @Param('id', ParseIntPipe) id: number,
+    @Query() query: LanguageRequestDto,
+    @Req() request: Request
+  ): Promise<OrganizationInterfaces.Response> {
+    return this.organizationService.getByIdVersion({
+      id: request['userData']?.organizationId,
+      ...query,
+      role: request['userData'].user.role,
+      logData: request['userData'],
+    });
+  }
+
   @Post()
   @ApiBody({ type: OrganizationCreateDto })
   @UseInterceptors(FilesInterceptor('photos'))
@@ -110,9 +169,6 @@ export class OrganizationController {
     @Req() request: Request,
     @UploadedFiles() files: Multer.File[]
   ): Promise<OrganizationInterfaces.Response> {
-    console.log(request.body['userData'], 'request.body');
-    console.log(request['userData'], 'request.body 2');
-    
     return this.organizationService.create(
       data,
       request['userData'].user.role,
@@ -121,64 +177,87 @@ export class OrganizationController {
     );
   }
 
-  @Put(':id')
+  @Post('site')
+  @ApiBody({ type: OrganizationBusinessCreateDto })
+  @HttpCode(HttpStatus.CREATED)
+  async createBusiness(
+    @Body() data: OrganizationBusinessCreateDto
+  ): Promise<OrganizationInterfaces.ResponseBusiness> {
+    return this.organizationService.createBusiness(data);
+  }
+
+  @Put('site/update')
   @ApiBody({ type: OrganizationVersionUpdateDto })
-  @UseInterceptors(FilesInterceptor('photos'))
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'photos', maxCount: 99 },
+      { name: 'logo', maxCount: 1 },
+      { name: 'banner', maxCount: 1 },
+    ])
+  )
   @ApiConsumes('multipart/form-data')
   @HttpCode(HttpStatus.OK)
   async update(
-    @Param('id', ParseIntPipe) id: number,
     @Body() data: Omit<OrganizationVersionUpdateDto, 'id'>,
     @Req() request: Request,
-    @UploadedFiles() files: Multer.File[]
+    @UploadedFiles()
+    files: {
+      photos?: Multer.File[];
+      logo?: Multer.File[];
+      banner?: Multer.File[];
+    }
   ): Promise<OrganizationVersionInterfaces.Response> {
     return this.organizationService.update(
-      { ...data, id },
-      request['userData'].user.role,
-      request['userData'].user.numericId,
+      {
+        ...data,
+        id: request['userData']?.organizationId,
+        staffNumber: request['userData'].user.numericId,
+        role: request['userData'].user.role,
+        logData: request['userData'],
+      },
       files
     );
   }
-//   @Put('check/:id')
-//   @ApiBody({ type: ConfirmDto })
-//   @HttpCode(HttpStatus.OK)
-//   async updateCheck(
-//     @Param('id', ParseIntPipe) id: number,
-//     @Body() data: Omit<ConfirmDto, 'id'>,
-//     @Req() request: Request
-//   ): Promise<OrganizationVersionInterfaces.Response> {
-//     return this.organizationService.updateCheck(
-//       { ...data, id },
-//       request.body['userData'].user.role,
-//       request.body['userData'].user.numericId
-//     );
-//   }
+  //   @Put('check/:id')
+  //   @ApiBody({ type: ConfirmDto })
+  //   @HttpCode(HttpStatus.OK)
+  //   async updateCheck(
+  //     @Param('id', ParseIntPipe) id: number,
+  //     @Body() data: Omit<ConfirmDto, 'id'>,
+  //     @Req() request: Request
+  //   ): Promise<OrganizationVersionInterfaces.Response> {
+  //     return this.organizationService.updateCheck(
+  //       { ...data, id },
+  //       request.body['userData'].user.role,
+  //       request.body['userData'].user.numericId
+  //     );
+  //   }
 
-//   @Delete(':id')
-//   @HttpCode(HttpStatus.OK)
-//   async delete(
-//     @Param('id', ParseIntPipe) id: number,
-//     @Req() request: Request,
-//     @Query('delete') deleteQuery?: boolean,
-//     @Query('deleteReason') deleteReason?: string
-//   ): Promise<OrganizationInterfaces.Response> {
-//     return this.organizationService.delete({
-//       id,
-//       delete: deleteQuery,
-//       role: request.body['userData'].user.role,
-//       deleteReason: deleteReason,
-//     });
-//   }
+  //   @Delete(':id')
+  //   @HttpCode(HttpStatus.OK)
+  //   async delete(
+  //     @Param('id', ParseIntPipe) id: number,
+  //     @Req() request: Request,
+  //     @Query('delete') deleteQuery?: boolean,
+  //     @Query('deleteReason') deleteReason?: string
+  //   ): Promise<OrganizationInterfaces.Response> {
+  //     return this.organizationService.delete({
+  //       id,
+  //       delete: deleteQuery,
+  //       role: request.body['userData'].user.role,
+  //       deleteReason: deleteReason,
+  //     });
+  //   }
 
-//   @Put(':id/restore')
-//   @HttpCode(HttpStatus.OK)
-//   async restore(
-//     @Param('id', ParseIntPipe) id: number,
-//     @Req() request: Request
-//   ): Promise<OrganizationInterfaces.Response> {
-//     return this.organizationService.restore({
-//       id,
-//       role: request.body['userData'].user.role,
-//     });
-//   }
+  //   @Put(':id/restore')
+  //   @HttpCode(HttpStatus.OK)
+  //   async restore(
+  //     @Param('id', ParseIntPipe) id: number,
+  //     @Req() request: Request
+  //   ): Promise<OrganizationInterfaces.Response> {
+  //     return this.organizationService.restore({
+  //       id,
+  //       role: request.body['userData'].user.role,
+  //     });
+  //   }
 }

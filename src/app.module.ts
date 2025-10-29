@@ -12,9 +12,6 @@ import { AuthGuard } from './common/guard/auth.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from './modules/user/user/user.module';
 import { AllExceptionsFilter } from './common/filter/exception.filter';
-
-import { DistrictModule } from './modules/organization/district/district.module';
-
 import { RegionModule } from './modules/organization/region/region.module';
 import { CityModule } from './modules/organization/city/city.module';
 import { OrganizationModule } from './modules/organization/organization/organization.module';
@@ -22,6 +19,12 @@ import { GoogleCloudStorageModule } from './modules/file-upload/google-cloud-sto
 import { AdditionalModule } from './modules/additional/additional.module';
 import { AdditionalCategoryModule } from './modules/additional-category/additional-category.module';
 import { SavedOrganizationModule } from './modules/organization/saved-organization/saved-organization.module';
+import { MinioModule } from './modules/minio/minio.module';
+import { OrganizationMonitoringModule } from './modules/monitoring/monitoring.module';
+import { CacheModule } from './modules/cache/cache.module';
+import { NominatimModule } from './modules/nominatim/nominatim.module';
+import { SiteStatisticsModule } from './modules/organization/site-statistics/site-statistics.module';
+import { NotificationsModule } from './modules/organization/notification/notifications.module';
 
 @Module({
   imports: [
@@ -43,7 +46,13 @@ import { SavedOrganizationModule } from './modules/organization/saved-organizati
     SavedOrganizationModule,
     AdditionalModule,
     AdditionalCategoryModule,
+    MinioModule,
+    OrganizationMonitoringModule,
+    CacheModule,
+    NominatimModule,
     // GoogleCloudStorageModule,
+    SiteStatisticsModule,
+    NotificationsModule,
   ],
   providers: [
     {

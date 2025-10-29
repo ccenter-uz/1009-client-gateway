@@ -21,7 +21,6 @@ import {
   savedOrganizationUpdateDto,
   savedOrganizationInterfaces,
 } from 'types/organization/saved-organization';
-import { CityFilterDto } from 'types/organization/city/dto/filter-city.dto';
 
 @ApiBearerAuth()
 @ApiTags('saved-organization')
@@ -34,56 +33,37 @@ export class SavedOrganizationController {
   async getAll(
     @Query() query: CityFilterDto
   ): Promise<savedOrganizationInterfaces.Response[]> {
-    return await this.subCategoryService.getAll(query);
-  }
-
-  @Get(':id')
-  @ApiParam({ name: 'id' })
-  @HttpCode(HttpStatus.OK)
-  async getById(
-    @Param('id', ParseIntPipe) id: number,
-    @Query() query: LanguageRequestDto
-  ): Promise<savedOrganizationInterfaces.Response> {
-    return this.subCategoryService.getById({ id, ...query });
-  }
-
-  @Post()
-  @ApiBody({ type: SavedOrganizationCreateDto })
-  @HttpCode(HttpStatus.CREATED)
-  async create(
-    @Body() data: SavedOrganizationCreateDto,
-    @Req() request: Request
-  ): Promise<savedOrganizationInterfaces.Response> {
-    return this.subCategoryService.create({
-      ...data,
+    return await this.subCategoryService.getAll({
+      ...query,
+      savedOrganization: true,
       userId: request['userData']?.user?.id,
     });
   }
 
-  @Put(':id')
-  @ApiBody({ type: savedOrganizationUpdateDto })
-  @HttpCode(HttpStatus.OK)
-  async update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() data: Omit<savedOrganizationUpdateDto, 'id'>
+  @Post(':organizationId')
+  // @ApiBody({ type: SavedOrganizationCreateDto })
+  @HttpCode(HttpStatus.CREATED)
+  async create(
+    @Req() request: Request,
+    @Param('organizationId', ParseIntPipe) id: number
+    // @Body() data: SavedOrganizationCreateDto
   ): Promise<savedOrganizationInterfaces.Response> {
-    return this.subCategoryService.update({ ...data, id });
+    return this.subCategoryService.create({
+      organizationId: id,
+      userId: request['userData']?.user?.id,
+    });
   }
 
-  @Delete(':id')
+  @Delete(':organizationId')
   @HttpCode(HttpStatus.OK)
   async delete(
-    @Param('id', ParseIntPipe) id: number,
-    @Query('delete') deleteQuery?: boolean
+    @Req() request: Request,
+    @Param('organizationId', ParseIntPipe) id: number
+    // @Query('delete') deleteQuery?: boolean
   ): Promise<savedOrganizationInterfaces.Response> {
-    return this.subCategoryService.delete({ id, delete: deleteQuery });
-  }
-
-  @Put(':id/restore')
-  @HttpCode(HttpStatus.OK)
-  async restore(
-    @Param('id', ParseIntPipe) id: number
-  ): Promise<savedOrganizationInterfaces.Response> {
-    return this.subCategoryService.restore({ id });
+    return this.subCategoryService.delete({
+      id,
+      userId: request['userData']?.user?.id,
+    });
   }
 }
