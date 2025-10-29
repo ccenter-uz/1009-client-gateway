@@ -1,13 +1,23 @@
-import { Logger } from '@nestjs/common';
+import { Logger, Inject, Injectable, Req } from '@nestjs/common';
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
+import { lastValueFrom } from 'rxjs';
 import { Server, Socket } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
+import { ORGANIZATION } from 'types/config';
+import { ClientProxy } from '@nestjs/microservices';
 import * as Config from '../../../common/config/app.config';
+import { NotificationServiceCommands as Commands } from 'types/organization/notification/commands';
+import {
+  NotificationInterfaces,
+  NotificationUpdateDto,
+  NotificationCreateDto,
+} from 'types/organization/notification';
+import { GetOneDto } from 'types/global';
 
 export type NewApplicationPayload = {
   id: string;
@@ -30,15 +40,17 @@ export class NotificationsGateway
   @WebSocketServer()
   server!: Server;
 
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    @Inject(ORGANIZATION) private readonly adminClient: ClientProxy
+  ) {}
 
-  handleConnection(client: Socket) {
+  async handleConnection(client: Socket) {
     try {
-      // Expect Authorization: Bearer <token>
       const authHeader = client.handshake.headers['authorization'] as
         | string
         | undefined;
-      let userId: string = '';
+      let organizationId: string = '';
       if (authHeader && authHeader.startsWith('Bearer ')) {
         const token = authHeader.split(' ')[1];
         try {
@@ -49,17 +61,37 @@ export class NotificationsGateway
           });
 
           console.log(payload);
-          userId = payload.userId;
+          // organizationId = payload.organizationId;
+          organizationId = '11';
+
+          let notification = await lastValueFrom(
+            this.adminClient.send<NotificationInterfaces.Response, GetOneDto>(
+              { cmd: Commands.GET_BY_ID },
+              {
+                id: +organizationId,
+              }
+            )
+          );
+          console.log(notification, 'loggg');
+
+          if (notification) {
+            client.emit('organization_notification', notification);
+            this.logger.debug(
+              `Sent notification to client ${client.id} for organization ${organizationId}`
+            );
+          }
         } catch (e) {
           this.logger.warn('Invalid socket token');
         }
       }
       console.log('okkk');
-      client.join(`manager:${userId}`);
+      client.join(`organization:${organizationId}`);
 
-      if (userId) {
-        client.join(`manager:${userId}`);
-        this.logger.debug(`Client ${client.id} joined manager room ${userId}`);
+      if (organizationId) {
+        client.join(`organization:${organizationId}`);
+        this.logger.debug(
+          `Client ${client.id} joined organization room ${organizationId}`
+        );
       } else {
         this.logger.debug(`Client ${client.id} connected without managerId`);
       }
@@ -80,5 +112,23 @@ export class NotificationsGateway
         this.server.to(`manager:${managerId}`).emit('new_application', rest);
       });
     }
+  }
+
+  emitOrganizationNotification(payload: NotificationInterfaces.Response) {
+    if (!payload || !payload.organizationId) {
+      this.logger.warn(
+        'emitOrganizationNotification called without organizationId'
+      );
+      return;
+    }
+    let organizationId = payload.organizationId;
+    // 🔹 “organization:{id}” kanaliga emit qilamiz
+    this.server
+      .to(`organization:${organizationId}`)
+      .emit('organization_notification', payload);
+
+    this.logger.debug(
+      `Sent 'organization_notification' to organization:${organizationId}`
+    );
   }
 }
