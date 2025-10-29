@@ -17,20 +17,19 @@ async function bootstrap() {
     transport: Transport.RMQ,
     options: {
       urls: ['amqp://guest:guest@localhost:5672'],
-      queue: 'client-gateway.q.org-events',
+      queue: 'client', // Match the queue name from organization service
       queueOptions: {
         durable: true,
         arguments: {
           'x-dead-letter-exchange': 'amq.topic',
-          'x-dead-letter-routing-key': 'client-gateway.org-events.dlq',
+          'x-dead-letter-routing-key': 'client.dlq',
         },
       },
-      noAck: false, // we’ll ack manually after processing
+      noAck: false, // we'll ack manually after processing
       prefetchCount: 10, // back-pressure
       persistent: true, // persistent messages
     },
   });
-
 
   app.setGlobalPrefix('v1');
   app.use(bodyParser.json({ limit: '10mb' }));
@@ -62,7 +61,6 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, platformDocument);
   await app.startAllMicroservices();
 
-  
   await app.listen(appConfig.port).then(() => {
     console.log(`API: http://${appConfig.host}:${appConfig.port}`);
     console.log(`DOCS: http://${appConfig.host}:${appConfig.port}/docs`);

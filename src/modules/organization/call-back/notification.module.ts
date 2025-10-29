@@ -6,7 +6,7 @@ import { OrganizationEventsListener } from './notification.controller';
 @Module({
   imports: [],
   controllers: [OrganizationEventsListener],
-  providers: [OrganizationEventsListener],
+  providers: [],
   exports: [],
 })
 export class OrganizationEventsListenerModule {}
