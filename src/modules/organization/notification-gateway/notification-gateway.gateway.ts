@@ -17,7 +17,9 @@ import {
   NotificationUpdateDto,
   NotificationCreateDto,
 } from 'types/organization/notification';
-import { GetOneDto } from 'types/global';
+import { DefaultStatus, GetOneDto, StatusEnum } from 'types/global';
+import { NotificationFilterDto } from 'types/organization/notification/dto/filter-notification.dto';
+import { NotificationService } from '../notification/notification.service';
 
 export type NewApplicationPayload = {
   id: string;
@@ -42,7 +44,8 @@ export class NotificationsGateway
 
   constructor(
     private readonly jwtService: JwtService,
-    @Inject(ORGANIZATION) private readonly adminClient: ClientProxy
+    @Inject(ORGANIZATION) private readonly adminClient: ClientProxy,
+    private readonly notificationService: NotificationService
   ) {}
 
   async handleConnection(client: Socket) {
@@ -54,25 +57,20 @@ export class NotificationsGateway
       if (authHeader && authHeader.startsWith('Bearer ')) {
         const token = authHeader.split(' ')[1];
         try {
-          console.log(token);
-
           const payload = this.jwtService.verify(token, {
             secret: Config.JwtConfig.secretKey,
           });
 
-          console.log(payload);
-          // organizationId = payload.organizationId;
-          organizationId = '11';
+          organizationId = payload.organizationId;
 
-          let notification = await lastValueFrom(
-            this.adminClient.send<NotificationInterfaces.Response, GetOneDto>(
-              { cmd: Commands.GET_BY_ID },
-              {
-                id: +organizationId,
-              }
-            )
-          );
-          console.log(notification, 'loggg');
+          let notification = await this.notificationService.getAll({
+            organizationId: +organizationId,
+            isRead: false,
+            limit: 10,
+            page: 1,
+            all: true,
+            status: StatusEnum.ACTIVE,
+          });
 
           if (notification) {
             client.emit('organization_notification', notification);
@@ -84,7 +82,6 @@ export class NotificationsGateway
           this.logger.warn('Invalid socket token');
         }
       }
-      console.log('okkk');
       client.join(`organization:${organizationId}`);
 
       if (organizationId) {
@@ -104,15 +101,15 @@ export class NotificationsGateway
     this.logger.debug(`Client disconnected: ${client.id}`);
   }
 
-  emitNewApplication(payload: NewApplicationPayload) {
-    const { enabledManagers, ...rest } = payload;
-    if (Array.isArray(enabledManagers) && enabledManagers.length > 0) {
-      enabledManagers.forEach((managerId) => {
-        if (!managerId) return;
-        this.server.to(`manager:${managerId}`).emit('new_application', rest);
-      });
-    }
-  }
+  // emitNewApplication(payload: NewApplicationPayload) {
+  //   const { enabledManagers, ...rest } = payload;
+  //   if (Array.isArray(enabledManagers) && enabledManagers.length > 0) {
+  //     enabledManagers.forEach((managerId) => {
+  //       if (!managerId) return;
+  //       this.server.to(`manager:${managerId}`).emit('new_application', rest);
+  //     });
+  //   }
+  // }
 
   emitOrganizationNotification(payload: NotificationInterfaces.Response) {
     if (!payload || !payload.organizationId) {

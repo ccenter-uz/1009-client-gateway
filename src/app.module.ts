@@ -24,9 +24,9 @@ import { OrganizationMonitoringModule } from './modules/monitoring/monitoring.mo
 import { CacheModule } from './modules/cache/cache.module';
 import { NominatimModule } from './modules/nominatim/nominatim.module';
 import { SiteStatisticsModule } from './modules/organization/site-statistics/site-statistics.module';
-import { NotificationsModule } from './modules/organization/notification/notifications.module';
-import { OrganizationEventsListener } from './modules/organization/call-back/notification.controller';
-import { OrganizationEventsListenerModule } from './modules/organization/call-back/notification.module';
+import { NotificationsGatewayModule } from './modules/organization/notification-gateway/notifications-gateway.module';
+import { CallBackModule } from './modules/organization/call-back/call-back.module';
+import { NotificationModule } from './modules/organization/notification/notification.module';
 
 @Module({
   imports: [
@@ -54,8 +54,9 @@ import { OrganizationEventsListenerModule } from './modules/organization/call-ba
     NominatimModule,
     // GoogleCloudStorageModule,
     SiteStatisticsModule,
-    NotificationsModule,
-    OrganizationEventsListenerModule,
+    NotificationsGatewayModule,
+    CallBackModule,
+    NotificationModule,
   ],
   providers: [
     {

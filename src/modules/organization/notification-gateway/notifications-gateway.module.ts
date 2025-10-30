@@ -3,7 +3,8 @@ import { ClientsModule } from '@nestjs/microservices';
 import { initRmqClient, ORGANIZATION } from 'types/config';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { NotificationsGateway } from './notifications.gateway';
+import { NotificationsGateway } from './notification-gateway.gateway';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
   imports: [
@@ -16,8 +17,9 @@ import { NotificationsGateway } from './notifications.gateway';
         secret: configService.get<string>('jwt.secret'),
       }),
     }),
+    NotificationModule,
   ],
   providers: [NotificationsGateway],
   exports: [NotificationsGateway],
 })
-export class NotificationsModule {}
+export class NotificationsGatewayModule {}
