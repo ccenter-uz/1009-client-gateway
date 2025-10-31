@@ -24,7 +24,9 @@ import { OrganizationMonitoringModule } from './modules/monitoring/monitoring.mo
 import { CacheModule } from './modules/cache/cache.module';
 import { NominatimModule } from './modules/nominatim/nominatim.module';
 import { SiteStatisticsModule } from './modules/organization/site-statistics/site-statistics.module';
-import { NotificationsModule } from './modules/organization/notification/notifications.module';
+import { NotificationsGatewayModule } from './modules/organization/notification-gateway/notifications-gateway.module';
+import { CallBackModule } from './modules/organization/call-back/call-back.module';
+import { NotificationModule } from './modules/organization/notification/notification.module';
 
 @Module({
   imports: [
@@ -52,7 +54,9 @@ import { NotificationsModule } from './modules/organization/notification/notific
     NominatimModule,
     // GoogleCloudStorageModule,
     SiteStatisticsModule,
-    NotificationsModule,
+    NotificationsGatewayModule,
+    CallBackModule,
+    NotificationModule,
   ],
   providers: [
     {
@@ -67,6 +71,7 @@ import { NotificationsModule } from './modules/organization/notification/notific
       provide: APP_GUARD,
       useClass: AuthGuard,
     },
+    // OrganizationEventsListener,
   ],
 })
 export class AppModule {}

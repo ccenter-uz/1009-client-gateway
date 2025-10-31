@@ -5,12 +5,32 @@ import { AppConfig } from './common/config/app.config';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as bodyParser from 'body-parser';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
   const appConfig = configService.get<AppConfig>('app');
   const corsOrigin: string = appConfig.cors_domains;
+
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.RMQ,
+    options: {
+      urls: ['amqp://guest:guest@localhost:5672'],
+      queue: 'client', // Match the queue name from organization service
+      queueOptions: {
+        durable: true,
+        arguments: {
+          'x-dead-letter-exchange': 'amq.topic',
+          'x-dead-letter-routing-key': 'client.dlq',
+        },
+      },
+      noAck: false, // we'll ack manually after processing
+      prefetchCount: 10, // back-pressure
+      persistent: true, // persistent messages
+    },
+  });
+
   app.setGlobalPrefix('v1');
   app.use(bodyParser.json({ limit: '10mb' }));
   app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
@@ -39,6 +59,7 @@ async function bootstrap() {
     .build();
   const platformDocument = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('docs', app, platformDocument);
+  await app.startAllMicroservices();
 
   await app.listen(appConfig.port).then(() => {
     console.log(`API: http://${appConfig.host}:${appConfig.port}`);

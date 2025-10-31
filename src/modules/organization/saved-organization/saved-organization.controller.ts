@@ -22,6 +22,7 @@ import {
   savedOrganizationInterfaces,
   SavedOrganizationFilterDto,
 } from 'types/organization/saved-organization';
+import { CityFilterDto } from 'types/organization/city/dto/filter-city.dto';
 
 @ApiBearerAuth()
 @ApiTags('saved-organization')

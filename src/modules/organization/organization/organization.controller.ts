@@ -100,9 +100,7 @@ export class OrganizationController {
     @Param('name') name: string,
     @Req() request: Request
   ): Promise<OrganizationInterfaces.Response[]> {
-    return await this.organizationService.getOrganizationSearch(
-      name
-    );
+    return await this.organizationService.getOrganizationSearch(name);
   }
 
   //   @Get('unconfirm')
@@ -209,7 +207,6 @@ export class OrganizationController {
       banner?: Multer.File[];
     }
   ): Promise<OrganizationVersionInterfaces.Response> {
-    
     return this.organizationService.update(
       {
         ...data,
