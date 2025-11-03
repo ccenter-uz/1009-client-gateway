@@ -78,7 +78,7 @@ export class AuthGuard implements CanActivate {
       path,
       method,
     };
-    request.userData = userData;
+    request.userData = userData; //userdata
 
     request.body.userData = userData;
 
