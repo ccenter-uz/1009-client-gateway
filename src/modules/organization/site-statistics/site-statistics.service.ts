@@ -36,31 +36,52 @@ export class SiteStatisticsService {
   async create(
     data: siteStatisticsCreateDto
   ): Promise<siteStatisticsInterfaces.Response> {
-    const findRegion = await this.nominatimService.reverse({
-      lat: String(data.address[0]),
-      lon: String(data.address[1]),
-    });
+    let region: string | null = null;
 
-    let region = null;
+    // 1️⃣ GPS orqali aniqlash
+    if (
+      Array.isArray(data.address) &&
+      data.address.length === 2 &&
+      data.address[0] &&
+      data.address[1]
+    ) {
+      const findRegion = await this.nominatimService.reverse({
+        lat: String(data.address[0]),
+        lon: String(data.address[1]),
+      });
 
-    if (findRegion && findRegion.address.city) {
-      region = findRegion.address.city;
-    } else if (findRegion && findRegion.address.state) {
-      region = findRegion.address.state;
+      if (findRegion?.address?.city) {
+        region = findRegion.address.city;
+      } else if (findRegion?.address?.state) {
+        region = findRegion.address.state;
+      }
+    }
+
+    // 2️⃣ Agar GPS bermasa → IP orqali
+    if (!region && data.ip) {
+      try {
+        const res = await fetch(`https://ipwho.is/${data.ip}`);
+        const geo: any = await res.json();
+
+        if (geo.success) {
+          region = geo.region || geo.city || null;
+        } else {
+          region = null;
+        }
+      } catch (e) {
+        console.log(e.message);
+        region = null;
+      }
     }
 
     if (region) {
       const lowerRegion = region.toLowerCase();
       const matched = Regions.find((r) => lowerRegion.includes(r));
 
-      if (matched) {
-        region = matched;
-      } else {
-        region = 'toshkent';
-      }
+      region = matched || 'toshkent';
     }
 
-    data.addressCity = region;
+    data.addressCity = region || 'toshkent';
 
     return await lastValueFrom(
       this.adminClient.send<

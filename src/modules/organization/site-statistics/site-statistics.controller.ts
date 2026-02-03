@@ -22,6 +22,7 @@ import {
   siteStatisticsFilterDto,
   GetSiteStatisticsDto,
 } from 'types/organization/site-statistics';
+import { Request } from 'express';
 
 @ApiBearerAuth()
 @ApiTags('bisiness-statistics')
@@ -45,8 +46,18 @@ export class SiteStatisticsController {
   @ApiBody({ type: siteStatisticsCreateDto })
   @HttpCode(HttpStatus.CREATED)
   async create(
+    @Req() req: Request,
     @Body() data: siteStatisticsCreateDto
   ): Promise<siteStatisticsInterfaces.Response> {
+    const ip =
+      (req.headers['x-forwarded-for'] as string)?.split(',')[0] ||
+      req.socket?.remoteAddress ||
+      req.ip;
+    const cleanIp = ip?.replace('::ffff:', '');
+    const userAgent = req.headers['user-agent'];
+    data.ip = cleanIp || 'unknown';
+    data.userAgent = userAgent || 'unknown';
+
     return this.siteStatisticsService.create(data);
   }
 }
